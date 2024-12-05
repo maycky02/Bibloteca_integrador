@@ -1,0 +1,36 @@
+package com.trilce.Bibloteca.controladores;
+
+
+import com.trilce.Bibloteca.servicios.SancionService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+@RequestMapping("/admin/sanciones")
+@RequiredArgsConstructor
+public class SancionController {
+
+    private final SancionService sancionService;
+
+    @GetMapping
+    public String listarSanciones(Model model) {
+        model.addAttribute("sanciones", sancionService.listarSanciones());
+        return "admin/sanciones";
+    }
+
+    @PostMapping("/{id}/eliminar")
+    public String eliminarSancion(@PathVariable Long id) {
+        sancionService.eliminarSancion(id);
+        return "redirect:/admin/sanciones";
+    }
+    @PostMapping("/registrar")
+    public String registrarSancion(@RequestParam String dniUsuario,
+                                    @RequestParam String motivo,
+                                    @RequestParam int diasDeSancion) {
+        sancionService.registrarSancion(dniUsuario, motivo, diasDeSancion);
+        return "redirect:/admin/sanciones";
+    }
+
+}

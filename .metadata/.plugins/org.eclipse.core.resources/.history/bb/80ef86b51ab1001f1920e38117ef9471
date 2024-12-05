@@ -1,0 +1,78 @@
+package com.trilce.Bibloteca.controladores;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.trilce.Bibloteca.Entidades.Reserva;
+import com.trilce.Bibloteca.servicios.ReservaService;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequestMapping("/admin/reservas")
+@RequiredArgsConstructor
+public class ReservaController {
+
+    private final ReservaService reservaService;
+
+    // Listar todas las reservas con filtro opcional por DNI
+    @GetMapping
+    public String listarReservas(@RequestParam(required = false) String dni, Model model) {
+        List<Reserva> reservas = reservaService.listarReservas();
+
+        if (dni != null && !dni.isEmpty()) {
+            reservas = reservas.stream()
+                .filter(reserva -> reserva.getUsuario() != null && reserva.getUsuario().getDni().equals(dni))
+                .collect(Collectors.toList());
+            model.addAttribute("dni", dni);  // Agregar el filtro DNI al modelo
+        }
+
+        model.addAttribute("reservas", reservas);
+        return "admin/reservas"; // Nombre de la vista Thymeleaf para reservas
+    }
+
+    // Aprobar una reserva
+    @PostMapping("/{id}/aprobar")
+    public String aprobarReserva(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        reservaService.aprobarReserva(id);
+        reservaService.crearPrestamoDesdeReserva(id);
+
+        redirectAttributes.addFlashAttribute("success", "Reserva aprobada y préstamo creado.");
+        return "redirect:/admin/prestamos"; // Redirigir a préstamos
+    }
+
+    // Rechazar una reserva
+    @PostMapping("/{id}/rechazar")
+    public String rechazarReserva(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        reservaService.rechazarReserva(id);
+
+        redirectAttributes.addFlashAttribute("success", "Reserva rechazada y stock actualizado.");
+        return "redirect:/admin/reservas"; // Redirigir a reservas
+    }
+
+    // Realizar una reserva (Para usuarios - mover a un controlador lector si es necesario)
+    @PostMapping("/reservar")
+    public String realizarReserva(Reserva reserva, RedirectAttributes redirectAttributes) {
+        String mensaje = reservaService.reservarLibro(reserva);
+
+        if (mensaje.startsWith("No puedes realizar una reserva") || mensaje.startsWith("Ya tienes una reserva activa")) {
+            redirectAttributes.addFlashAttribute("error", mensaje); // Mensaje de error
+            return "redirect:/lector/catalogo"; // Redirigir al catálogo
+        } else if (mensaje.startsWith("No hay stock disponible")) {
+            redirectAttributes.addFlashAttribute("info", mensaje); // Mensaje de stock insuficiente
+            return "redirect:/lector/catalogo"; // Redirigir al catálogo
+        } else {
+            redirectAttributes.addFlashAttribute("success", mensaje); // Mensaje de éxito
+            return "redirect:/lector/reserva_confirmada"; // Redirigir a confirmación
+        }
+    }
+}

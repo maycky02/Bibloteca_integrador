@@ -1,0 +1,41 @@
+package com.trilce.Bibloteca.servicios;
+
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.repositorio.UsuarioRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+@Service
+public class UsuarioService {
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public String registrarUsuario(Usuario usuario) {
+        // Validar correo institucional
+        if (!usuario.getCorreo().endsWith("@trilce.edu")) {
+            return "El correo debe ser institucional (@trilce.edu)";
+        }
+
+        // Validar DNI único
+        if (usuarioRepository.existsByDni(usuario.getDni())) {
+            return "El DNI ya está registrado.";
+        }
+
+        // Validar correo único
+        if (usuarioRepository.existsByCorreo(usuario.getCorreo())) {
+            return "El correo ya está registrado.";
+        }
+
+        // Cifrar contraseña
+        usuario.setContraseña(passwordEncoder.encode(usuario.getContraseña()));
+
+        // Guardar usuario
+        usuarioRepository.save(usuario);
+        return "Registro exitoso.";
+    }
+}

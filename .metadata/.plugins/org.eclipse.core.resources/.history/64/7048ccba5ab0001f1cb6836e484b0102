@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Libro</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Detalle del Libro</h1>
+        <p><strong>Título:</strong> <span th:text="${libro.titulo}"></span></p>
+        <p><strong>Autor:</strong> <span th:text="${libro.autor}"></span></p>
+        <p><strong>Género:</strong> <span th:text="${libro.genero}"></span></p>
+        <p><strong>Sinopsis:</strong> <span th:text="${libro.sinopsis}"></span></p>
+        <p><strong>ISBN:</strong> <span th:text="${libro.isbn}"></span></p>
+        <p><strong>Stock:</strong> <span th:text="${libro.stock}"></span></p>
+        <a href="/admin/libros" class="btn btn-primary">Volver</a>
+    </div>
+</body>
+</html>

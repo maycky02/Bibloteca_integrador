@@ -1,0 +1,18 @@
+package com.trilce.Bibloteca.repositorio;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import com.trilce.Bibloteca.Entidades.Reserva;
+
+@Repository
+public interface ReservaRepository extends JpaRepository<Reserva, Long> {
+    // Métodos personalizados, si es necesario, pero NO uno para findAllWithUsuarios
+    List<Reserva> findAll();  // Esta consulta ya incluye las relaciones con los usuarios gracias a JPA
+    @Query("SELECT COUNT(r) FROM Reserva r WHERE r.usuario.id = :usuarioId AND r.estado = 'Pendiente'")
+    int countReservasPendientesPorUsuario(@Param("usuarioId") Long usuarioId);
+}

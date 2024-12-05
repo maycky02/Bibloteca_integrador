@@ -1,0 +1,12 @@
+package com.trilce.Bibloteca.repositorio;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.trilce.Bibloteca.Entidades.Usuario;
+
+@Repository
+public interface UsuarioRepositorio extends JpaRepository<Usuario, Long> {
+    // Método personalizado para buscar un usuario por email
+    Usuario findByEmail(String email);
+}

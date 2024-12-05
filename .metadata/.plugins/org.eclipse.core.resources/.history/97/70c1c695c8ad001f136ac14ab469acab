@@ -1,0 +1,28 @@
+package com.trilce.Bibloteca.Entidades;
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+@Data
+@Entity
+@Table(name = "libros")
+public class Libro {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String titulo;
+    private String autor;
+    private String fechaPublicacion;
+    private String genero;
+    private String isbn;
+
+    @Lob
+    private String sinopsis;
+
+    @Column(nullable = false)
+    private int stock;
+
+    @Lob
+    private String imagen; // Almacenada como URL o base64
+}

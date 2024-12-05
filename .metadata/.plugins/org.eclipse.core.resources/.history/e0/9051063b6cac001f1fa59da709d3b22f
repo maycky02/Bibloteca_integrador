@@ -1,0 +1,69 @@
+package com.trilce.Bibloteca.controladores;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.trilce.Bibloteca.Entidades.Cliente;
+import com.trilce.Bibloteca.servicios.ClienteService;
+
+import ch.qos.logback.core.model.Model;
+
+@Controller
+@RequestMapping("/admin/clientes")
+public class ClienteController {
+
+    @Autowired
+    private ClienteService clienteService;
+
+    // Listar clientes con filtro por nombre o correo
+    @GetMapping
+    public String listarClientes(@RequestParam(required = false) String filtro, Model model) {
+        if (filtro != null && !filtro.isEmpty()) {
+            model.addAttribute("clientes", clienteService.buscarClientes(filtro));
+        } else {
+            model.addAttribute("clientes", clienteService.listarClientes());
+        }
+        return "admin/clientes";
+    }
+
+    // Guardar o actualizar cliente
+    @PostMapping
+    public String guardarCliente(Cliente cliente) {
+        clienteService.guardarCliente(cliente);
+        return "redirect:/admin/clientes";
+    }
+
+    // Editar cliente
+    @GetMapping("/editar/{id}")
+    public String editarCliente(@PathVariable Long id, Model model) {
+        Cliente cliente = clienteService.obtenerClientePorId(id);
+        model.addAttribute("cliente", cliente);
+        return "admin/editarCliente";  // Vista para editar cliente
+    }
+
+    // Eliminar cliente
+    @GetMapping("/eliminar/{id}")
+    public String eliminarCliente(@PathVariable Long id) {
+        clienteService.eliminarCliente(id);
+        return "redirect:/admin/clientes";
+    }
+
+    // Sancionar cliente
+    @GetMapping("/sancionar/{id}")
+    public String sancionarCliente(@PathVariable Long id) {
+        clienteService.cambiarSancion(id, true);
+        return "redirect:/admin/clientes";
+    }
+
+    // Levantar sanción del cliente
+    @GetMapping("/levantar-sancion/{id}")
+    public String levantarSancion(@PathVariable Long id) {
+        clienteService.cambiarSancion(id, false);
+        return "redirect:/admin/clientes";
+    }
+}

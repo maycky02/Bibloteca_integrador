@@ -1,0 +1,11 @@
+package com.trilce.Bibloteca.repositorio;
+
+
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.trilce.Bibloteca.Entidades.Usuario;
+public interface UsuarioRepositorio extends JpaRepository<Usuario, Long> {
+    Optional<Usuario> findByNombreUsuario(String nombreUsuario);
+}

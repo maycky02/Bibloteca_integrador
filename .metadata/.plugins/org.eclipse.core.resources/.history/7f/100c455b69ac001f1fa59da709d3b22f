@@ -1,0 +1,64 @@
+package com.trilce.Bibloteca.servicios;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Cliente;
+import com.trilce.Bibloteca.repositorio.ClienteRepository;
+
+@Service
+public class ClienteService {
+
+    @Autowired
+    private ClienteRepository clienteRepository;
+
+    public List<Cliente> listarClientes() {
+        return clienteRepository.findAll();
+    }
+
+    public Cliente guardarCliente(Cliente cliente) {
+        return clienteRepository.save(cliente);
+    }
+
+    public Cliente obtenerClientePorId(Long id) {
+        return clienteRepository.findById(id).orElse(null);
+    }
+
+    public void eliminarCliente(Long id) {
+        clienteRepository.deleteById(id);
+    }
+
+    public void cambiarSancion(Long id, boolean sancion) {
+        Cliente cliente = obtenerClientePorId(id);
+        if (cliente != null) {
+            cliente.setTieneSancion(sancion);
+            clienteRepository.save(cliente);
+        }
+    }
+
+    public List<Cliente> buscarClientes(String filtro) {
+        return clienteRepository.findByNombreContainingOrCorreoContainingOrDniContaining(filtro, filtro, filtro);
+    }
+
+    public Cliente obtenerClientePorDni(String dni) {
+        return clienteRepository.findByDni(dni)
+            .orElseThrow(() -> new EntityNotFoundException("Cliente no encontrado con DNI: " + dni));
+    }
+
+    public Cliente actualizarCliente(Long id, Cliente clienteActualizado) {
+        Cliente clienteExistente = obtenerClientePorId(id);
+        
+        clienteExistente.setNombre(clienteActualizado.getNombre());
+        clienteExistente.setApellido(clienteActualizado.getApellido());
+        clienteExistente.setCorreo(clienteActualizado.getCorreo());
+        clienteExistente.setDni(clienteActualizado.getDni());
+        
+        return clienteRepository.save(clienteExistente);
+    }
+
+    public boolean validarDni(String dni) {
+        return dni != null && dni.length() == 8 && dni.matches("\\d+");
+    }
+}

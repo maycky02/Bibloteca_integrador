@@ -1,0 +1,101 @@
+1732571573474	Rename package 'model'
+1732571588435	Delete element
+1732571738079	Rename compilation unit 'UsuarioRepository.java'
+1732571853663	Delete element
+1732571976728	Move compilation unit
+1732571982371	Move compilation unit
+1732571987350	Delete element
+1732593996651	Delete element
+1732596483437	Delete element
+1732596489954	Delete element
+1732598383035	Copy package
+1732598488617	Delete element
+1732598602493	Delete element
+1732598611849	Move compilation unit
+1732598616220	Move compilation unit
+1732598618892	Move compilation unit
+1732598621604	Move compilation unit
+1732598626152	Delete element
+1732598641395	Move compilation unit
+1732598643860	Move compilation unit
+1732598646500	Move compilation unit
+1732598651077	Move compilation unit
+1732598674396	Delete element
+1732598682734	Move compilation unit
+1732598685220	Move compilation unit
+1732598687930	Move compilation unit
+1732598691725	Move compilation unit
+1732598696153	Delete element
+1732598720891	Move compilation unit
+1732598723822	Move compilation unit
+1732598727934	Move compilation unit
+1732598730796	Move compilation unit
+1732598736577	Delete element
+1732666093967	Rename resource 'layout.html'
+1732666136773	Move 'layout_library_management.html' to 'layouts'
+1732666313134	Rename resource 'layout_library_management.html'
+1732666607935	Delete element
+1732667333675	Delete element
+1732760570454	Delete element
+1732760753381	Rename compilation unit 'SecurityConfig.java'
+1732761313531	Delete element
+1732762931767	Delete element
+1732762945502	Delete element
+1732762948579	Delete element
+1732762952510	Delete element
+1732762956173	Delete element
+1732762959183	Delete element
+1732762970091	Delete element
+1732762979306	Delete element
+1732763354054	Rename compilation unit 'LibroRepository.java'
+1732763379620	Rename compilation unit 'PrestamoRepository.java'
+1732763406660	Rename type 'SancionRepository'
+1732763612197	Rename compilation unit 'PrestamoService.java'
+1732763642559	Rename type 'SancionService'
+1732763696661	Delete element
+1732763699924	Delete element
+1732763724840	Delete element
+1732773466539	Rename type 'Usuario'
+1732773557838	Rename type 'UsuarioRepositorio'
+1732773671400	Rename type 'SeguridadConfig'
+1732774005797	Delete element
+1732774021260	Delete element
+1732813615295	Delete element
+1732813687525	Rename type 'PrestamoRepositorio'
+1732813728069	Delete element
+1732814309742	Delete element
+1732815055850	Delete element
+1732815060593	Delete element
+1732815082457	Delete element
+1732815094355	Delete element
+1732815101527	Delete element
+1732815105897	Delete element
+1732815112099	Delete element
+1732815118882	Delete element
+1732815733022	Rename type 'PrestamoServicio'
+1732816240411	Delete element
+1732817850655	Delete element
+1732818011301	Rename type 'LectorRepository'
+1732818348140	Rename type 'LectorController'
+1732818516489	Rename type 'LectorService'
+1732826185176	Move 'panel.html' to 'admin'
+1732829445782	Rename resource 'registro.html'
+1732829481183	Rename resource 'panel.html'
+1732830443703	Delete element
+1732830446481	Delete element
+1732830450446	Delete element
+1732830454041	Delete element
+1732833403900	Rename resource 'registrarme.html'
+1732833536563	Move 'prestamos.html' to 'lector'
+1732833898803	Rename resource 'registrar.html'
+1732837183452	Rename compilation unit 'UserDetailsService.java'
+1732838626029	Move 'catalogo.html' to 'lector'
+1732843237660	Rename resource 'libro_form.html'
+1732844794233	Move 'imagenes' to 'static'
+1732848047621	Delete element
+1732848056797	Delete element
+1732848341645	Move 'verLibro.html' to 'admin'
+1732849843865	Rename resource 'sanciones.html'
+1732849922841	Rename resource 'gestionusuario.html'
+1732944390969	Rename resource 'Sanciones.html'
+1732992751216	Delete element

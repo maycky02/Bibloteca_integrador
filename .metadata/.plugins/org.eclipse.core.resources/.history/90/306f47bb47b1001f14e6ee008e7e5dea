@@ -1,0 +1,55 @@
+package com.trilce.Bibloteca.Entidades;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.trilce.Bibloteca.Entidades.Historial;
+import com.trilce.Bibloteca.Entidades.Prestamo;
+import com.trilce.Bibloteca.Entidades.Reserva;
+import com.trilce.Bibloteca.servicios.PrestamoService;
+import com.trilce.Bibloteca.servicios.ReservaService;
+
+
+@Controller
+@RequestMapping("/lector")
+public class HistorialController {
+
+    @Autowired
+    private ReservaService reservaService;
+
+    @Autowired
+    private PrestamoService prestamoService;
+
+    // Asegúrate de tener un servicio para obtener el usuario
+
+    @GetMapping("/historial")
+    public String mostrarHistorial(Model model) {
+        // Obtén el usuario actual (este es un ejemplo, asume que tienes un método para obtener el usuario logueado)
+        Long usuarioId = obtenerUsuarioActualId();
+
+        // Obtener las reservas y préstamos
+        List<Reserva> reservas = reservaService.listarReservasPorUsuario(usuarioId);
+        List<Prestamo> prestamos = prestamoService.listarPrestamosPorUsuario(usuarioId);
+
+        // Crear un objeto Historial con los datos
+        Historial historial = new Historial();
+        historial.setReservas(reservas);
+        historial.setPrestamos(prestamos);
+
+        // Añadir al modelo para que se pueda acceder en la vista
+        model.addAttribute("historial", historial);
+
+        return "lector/historial";
+    }
+
+    private Long obtenerUsuarioActualId() {
+        // Este método debe devolver el ID del usuario actual, por ejemplo, obteniendo el usuario del contexto de seguridad
+        // Ejemplo:
+        return 1L;  // Este es un valor de ejemplo, cambia esto según la lógica de tu aplicación
+    }
+}

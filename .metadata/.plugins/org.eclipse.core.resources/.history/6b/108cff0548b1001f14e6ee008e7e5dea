@@ -1,0 +1,42 @@
+package com.trilce.Bibloteca.controladores;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.trilce.Bibloteca.Entidades.Historial;
+import com.trilce.Bibloteca.Entidades.Prestamo;
+import com.trilce.Bibloteca.Entidades.Reserva;
+import com.trilce.Bibloteca.servicios.PrestamoService;
+import com.trilce.Bibloteca.servicios.ReservaService;
+
+
+@Controller
+@RequestMapping("/lector")
+public class HistorialController {
+
+    @Autowired
+    private HistorialService historialService;
+    
+    @Autowired
+    private ReservaService reservaService;
+    
+    @Autowired
+    private PrestamoService prestamoService;
+
+    @GetMapping("/historial")
+    public String mostrarHistorial(Model model, @RequestParam("usuarioId") Long usuarioId) {
+        // Obtener el historial del usuario
+        Historial historial = historialService.findByUsuarioId(usuarioId);
+        
+        // Pasar las reservas y préstamos al template
+        model.addAttribute("reservas", historial.getReservas());
+        model.addAttribute("prestamos", historial.getPrestamos());
+        
+        return "lector/historial";
+    }
+}

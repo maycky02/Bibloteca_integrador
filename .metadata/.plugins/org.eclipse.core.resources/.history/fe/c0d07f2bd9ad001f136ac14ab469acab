@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Inicio de Sesión</title>
+</head>
+<body>
+    <h1>Iniciar Sesión</h1>
+    <form th:action="@{/login}" method="post">
+        <label for="correo">Correo Institucional:</label>
+        <input type="email" id="correo" name="username" placeholder="usuario@trilce.edu" required />
+
+        <label for="contraseña">Contraseña:</label>
+        <input type="password" id="contraseña" name="password" placeholder="Ingrese su contraseña" required />
+
+        <button type="submit">Ingresar</button>
+    </form>
+    <p>¿No tienes una cuenta? <a th:href="@{/registrarme}">Regístrate aquí</a>.</p>
+</body>
+</html>

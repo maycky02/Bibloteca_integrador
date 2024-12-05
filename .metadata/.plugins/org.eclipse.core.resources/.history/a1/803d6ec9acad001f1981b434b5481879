@@ -1,0 +1,91 @@
+package com.trilce.Bibloteca.servicio.impl;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Libro;
+import com.trilce.Bibloteca.Entidades.Prestamo;
+import com.trilce.Bibloteca.Entidades.Lector;
+import com.trilce.Bibloteca.repositorio.LibroRepositorio;
+import com.trilce.Bibloteca.repositorio.PrestamoRepository;
+import com.trilce.Bibloteca.repositorio.LectorRepository;
+import com.trilce.Bibloteca.servicios.PrestamoServicio;
+import com.trilce.Bibloteca.servicios.SancionServicio;
+
+@Service
+public class PrestamoServicioImpl implements PrestamoServicio {
+
+    @Autowired
+    private PrestamoRepository prestamoRepositorio;
+
+    @Autowired
+    private LectorRepository usuarioRepositorio;
+
+    @Autowired
+    private LibroRepositorio libroRepositorio;
+
+    @Autowired
+    private SancionServicio sancionServicio;
+
+    @Override
+    public Prestamo registrarPrestamo(Long usuarioId, Long libroId) {
+        Lector usuario = usuarioRepositorio.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (sancionServicio.tieneSancionActiva(usuarioId)) {
+            throw new RuntimeException("El usuario tiene una sanción activa y no puede realizar préstamos");
+        }
+
+        Libro libro = libroRepositorio.findById(libroId)
+                .orElseThrow(() -> new RuntimeException("Libro no encontrado"));
+
+        if (libro.getStock() <= 0) {
+            throw new RuntimeException("No hay stock disponible para este libro");
+        }
+
+        Prestamo prestamo = new Prestamo();
+        prestamo.setUsuario(usuario);
+        prestamo.setLibro(libro);
+        prestamo.setFechaInicio(LocalDate.now());
+        prestamo.setFechaFin(LocalDate.now().plusDays(14)); // Préstamo de 2 semanas
+        prestamo.setEstado("pendiente");
+
+        // Reducir el stock del libro
+        libro.setStock(libro.getStock() - 1);
+        libroRepositorio.save(libro);
+
+        return prestamoRepositorio.save(prestamo);
+    }
+
+    @Override
+    public Prestamo registrarDevolucion(Long prestamoId) {
+        Prestamo prestamo = prestamoRepositorio.findById(prestamoId)
+                .orElseThrow(() -> new RuntimeException("Préstamo no encontrado"));
+
+        if (!"pendiente".equals(prestamo.getEstado())) {
+            throw new RuntimeException("El préstamo ya ha sido entregado");
+        }
+
+        Libro libro = prestamo.getLibro();
+        libro.setStock(libro.getStock() + 1); // Incrementar el stock del libro
+        libroRepositorio.save(libro);
+
+        if (LocalDate.now().isAfter(prestamo.getFechaFin())) {
+            // Registrar sanción si la devolución es tardía
+            sancionServicio.registrarSancion(prestamo.getUsuario().getId());
+            prestamo.setEstado("retrasado");
+        } else {
+            prestamo.setEstado("entregado");
+        }
+
+        return prestamoRepositorio.save(prestamo);
+    }
+
+    @Override
+    public List<Prestamo> listarPrestamosPorUsuario(Long usuarioId) {
+        return prestamoRepositorio.findByUsuarioId(usuarioId);
+    }
+}

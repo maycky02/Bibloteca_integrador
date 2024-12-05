@@ -1,0 +1,33 @@
+<!-- Modal -->
+<div class="modal fade" id="detalleModal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="detalleModalLabel">Detalles del Libro</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Imagen del libro a la izquierda -->
+                    <div class="col-4">
+                        <img id="modalImagen" class="img-fluid" style="object-fit: cover; width: 100%; height: auto;" />
+                    </div>
+                    <!-- Información del libro a la derecha -->
+                    <div class="col-8">
+                        <p><strong>Título:</strong> <span id="modalTitulo"></span></p>
+                        <p><strong>Autor:</strong> <span id="modalAutor"></span></p>
+                        <p><strong>Género:</strong> <span id="modalGenero"></span></p>
+                        <p><strong>ISBN:</strong> <span id="modalISBN"></span></p>
+                        <p><strong>Fecha de Publicación:</strong> <span id="modalFechaPublicacion"></span></p>
+                        <p><strong>Stock:</strong> <span id="modalStock"></span></p>
+                        <p><strong>Sinopsis:</strong></p>
+                        <p id="modalSinopsis"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

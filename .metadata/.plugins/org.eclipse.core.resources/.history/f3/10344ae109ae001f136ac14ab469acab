@@ -1,0 +1,43 @@
+package com.trilce.Bibloteca.controladores;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.trilce.Bibloteca.servicios.ReservaService;
+
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequestMapping("/admin/reservas")
+@RequiredArgsConstructor
+public class ReservaController {
+
+    private final ReservaService reservaService;
+
+    @PostMapping("/{id}/aprobar")
+    public ResponseEntity<String> aprobarReserva(@PathVariable Long id) {
+        reservaService.aprobarReserva(id);
+        return ResponseEntity.ok("Reserva aprobada.");
+    }
+
+    @PostMapping("/{id}/rechazar")
+    public ResponseEntity<String> rechazarReserva(@PathVariable Long id) {
+        reservaService.rechazarReserva(id);
+        return ResponseEntity.ok("Reserva rechazada.");
+    }
+    @GetMapping
+    public ResponseEntity<?> listarReservas() {
+        return ResponseEntity.ok(reservaService.listarReservas());
+    }
+    @GetMapping("/reservas")
+    public String mostrarReservas(Model model) {
+        model.addAttribute("reservas", reservaService.listarReservas());
+        return "admin/reservas"; // Asegúrate de que este es el nombre correcto de tu plantilla
+    }
+
+}

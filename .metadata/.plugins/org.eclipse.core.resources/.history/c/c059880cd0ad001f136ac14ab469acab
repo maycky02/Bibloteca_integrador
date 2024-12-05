@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Registro de Usuario</title>
+</head>
+<body>
+    <h1>Registrarme</h1>
+    <form th:action="@{/registrarme}" method="post">
+        <label for="correo">Correo Institucional:</label>
+        <input type="email" id="correo" name="correo" placeholder="usuario@trilce.edu" required />
+
+        <label for="dni">DNI:</label>
+        <input type="text" id="dni" name="dni" placeholder="Ingrese su DNI" maxlength="8" required />
+
+        <label for="contraseña">Contraseña:</label>
+        <input type="password" id="contraseña" name="contraseña" placeholder="Ingrese su contraseña" required />
+
+        <label for="confirmarContraseña">Confirmar Contraseña:</label>
+        <input type="password" id="confirmarContraseña" name="confirmarContraseña" placeholder="Repita su contraseña" required />
+
+        <button type="submit">Registrarme</button>
+    </form>
+    <p>¿Ya tienes una cuenta? <a th:href="@{/login}">Inicia sesión aquí</a>.</p>
+</body>
+</html>

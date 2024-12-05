@@ -1,0 +1,52 @@
+package com.trilce.Bibloteca.servicio.impl;
+
+import java.time.LocalDate;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Sancion;
+import com.trilce.Bibloteca.Entidades.Lector;
+import com.trilce.Bibloteca.repositorio.SancionRepositorio;
+import com.trilce.Bibloteca.repositorio.UsuarioRepositorio;
+import com.trilce.Bibloteca.servicios.SancionServicio;
+
+@Service
+public class SancionServicioImpl implements SancionServicio {
+
+    @Autowired
+    private SancionRepositorio sancionRepositorio;
+
+    @Autowired
+    private UsuarioRepositorio usuarioRepositorio;
+
+    @Override
+    public Sancion registrarSancion(Long usuarioId) {
+        Lector usuario = usuarioRepositorio.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (sancionRepositorio.findByUsuarioId(usuarioId) != null) {
+            throw new RuntimeException("El usuario ya tiene una sanción activa");
+        }
+
+        Sancion sancion = new Sancion();
+        sancion.setUsuario(usuario);
+        sancion.setFechaInicio(LocalDate.now());
+        sancion.setFechaFin(LocalDate.now().plusDays(14)); // Bloqueo de 2 semanas
+
+        // Bloquear usuario
+        usuario.setEstado(false);
+        usuarioRepositorio.save(usuario);
+
+        return sancionRepositorio.save(sancion);
+    }
+
+    @Override
+    public boolean tieneSancionActiva(Long usuarioId) {
+        Sancion sancion = sancionRepositorio.findByUsuarioId(usuarioId);
+        if (sancion == null) {
+            return false;
+        }
+        return LocalDate.now().isBefore(sancion.getFechaFin());
+    }
+}

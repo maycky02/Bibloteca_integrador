@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Catálogo de libros de la Biblioteca Trilce. Reserva tus libros fácilmente.">
+    <title>Catálogo de Libros - Reserva Confirmada</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Fondo degradado y fuentes */
+        body {
+            background: linear-gradient(to right, #f4a261, #e76f51);
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Barra de navegación */
+        .navbar {
+            background-color: #f4a261;
+            border-bottom: 2px solid #e76f51;
+        }
+
+        .navbar a {
+            color: #ffffff !important;
+            font-weight: bold;
+        }
+
+        .navbar a:hover {
+            color: #e76f51;
+            text-decoration: underline;
+        }
+
+        /* Título */
+        h1 {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 2.5rem;
+        }
+
+        /* Estilo de las alertas */
+        .alert {
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        /* Botones */
+        .btn-primary {
+            background-color: #f4a261;
+            border-color: #f4a261;
+        }
+
+        .btn-primary:hover {
+            background-color: #e76f51;
+            border-color: #e76f51;
+        }
+
+        /* Pie de página */
+        footer {
+            background-color: #f4a261;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            border-top: 3px solid #e76f51;
+        }
+
+        footer a {
+            color: #ffffff;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Biblioteca Trilce</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/lector/perfil">Mi Perfil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Cerrar Sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenedor principal -->
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Catálogo de Libros</h1>
+
+        <!-- Reserva Confirmada -->
+        <div th:if="${reserva != null}" class="alert alert-success">
+            <p><strong>Libro:</strong> <span th:text="${reserva.libro.titulo}">Título del libro</span></p>
+            <p><strong>Usuario:</strong> <span th:text="${reserva.usuario.dni}">DNI del usuario</span></p>
+            <p><strong>Fecha de Reserva:</strong> <span th:text="${#dates.format(reserva.fechaReserva, 'yyyy-MM-dd HH:mm')}">Fecha</span></p>
+            <p><strong>Estado:</strong> <span th:text="${reserva.estado != null ? reserva.estado : 'Pendiente'}">Estado de la reserva</span></p>
+        </div>
+        <a href="/lector/catalogo" class="btn btn-primary">Volver al Catálogo</a>
+
+        <!-- Mostrar mensaje si el usuario está sancionado -->
+        <div th:if="${sancionMensaje != null}" class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Advertencia:</strong> <span th:text="${sancionMensaje}">Mensaje de sanción</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Alerta para la política de recogida de libros -->
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <strong>Importante:</strong> Tienes 24 horas para recoger el libro, o la reserva será cancelada automáticamente.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+
+    <!-- Scripts de Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

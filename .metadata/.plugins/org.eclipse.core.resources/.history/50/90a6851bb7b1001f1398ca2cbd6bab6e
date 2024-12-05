@@ -1,0 +1,48 @@
+package com.trilce.Bibloteca.controladores;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+
+import com.trilce.Bibloteca.Entidades.Usuario;
+
+@Controller
+public class HomeController {
+
+    @GetMapping("/inicio")
+    public String redireccionSegunRol() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        // Verifica si el usuario tiene el rol de Administrador
+        if (auth.getAuthorities().stream().anyMatch(role -> role.getAuthority().equals("ADMINISTRADOR"))) {
+            return "redirect:/admin/dashboard";  // Página de inicio del admin
+        } else {
+            return "redirect:/lector/catalogo";  // Página del catálogo para el lector
+        }
+    }
+    
+    
+    
+    
+    @ModelAttribute
+    public void agregarUsuarioLogueado(Model model) {
+        try {
+            // Obtener el correo del usuario logueado desde el contexto de seguridad
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String correoUsuario = user.getUsername();
+
+            // Buscar al usuario por su correo
+            Usuario usuario = usuarioRepository.findByCorreo(correoUsuario)
+                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+            // Agregar el nombre del usuario al modelo para que esté disponible en la vista
+            model.addAttribute("nombreUsuario", usuario.getNombre());
+        } catch (Exception e) {
+            // Si no hay usuario logueado, no pasa nada
+            model.addAttribute("nombreUsuario", null);
+        }
+    }
+}

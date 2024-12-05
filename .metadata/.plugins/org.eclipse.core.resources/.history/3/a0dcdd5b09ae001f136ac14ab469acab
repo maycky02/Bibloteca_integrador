@@ -1,0 +1,39 @@
+<!-- admin/reservas.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Reservas</title>
+</head>
+<body>
+    <h1>Gestión de Reservas</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Libro</th>
+                <th>Usuario</th>
+                <th>Fecha de Reserva</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="reserva : ${reservas}">
+                <td th:text="${reserva.libro.titulo}"></td>
+                <td th:text="${reserva.usuario.nombre}"></td>
+                <td th:text="${reserva.fechaReserva}"></td>
+                <td th:text="${reserva.estado}"></td>
+                <td>
+                    <form th:action="@{/admin/reservas/{id}/aprobar(id=${reserva.id})}" method="post">
+                        <button type="submit">Aprobar</button>
+                    </form>
+                    <form th:action="@{/admin/reservas/{id}/rechazar(id=${reserva.id})}" method="post">
+                        <button type="submit">Rechazar</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,88 @@
+package com.trilce.Bibloteca.controladores;
+
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.trilce.Bibloteca.Entidades.Sancion;
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.servicios.SancionService;
+import com.trilce.Bibloteca.servicios.UsuarioService;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequiredArgsConstructor
+public class SancionController {
+
+    private final UsuarioService usuarioService;
+    private final SancionService sancionService;
+
+    // Mostrar la página de sanciones y buscar usuario por DNI
+    @GetMapping("/admin/sanciones")
+    public String mostrarSancionesPage(@RequestParam(required = false) String dni, Model model) {
+        if (dni != null && !dni.isEmpty()) {
+            try {
+                Usuario usuario = usuarioService.buscarPorDni(dni);
+                model.addAttribute("usuario", usuario);
+            } catch (IllegalArgumentException e) {
+                model.addAttribute("error", e.getMessage());
+            }
+        }
+        return "admin/sanciones"; // Retorna la vista desde templates/admin/
+    }
+
+    // Registrar la sanción
+    @PostMapping("/admin/sancionar-usuario")
+    public String sancionarUsuario(@RequestParam Long usuarioId,
+                                   @RequestParam String motivo,
+                                   @RequestParam int diasSancion,
+                                   Model model) {
+        try {
+            sancionService.registrarSancion(usuarioId, motivo, diasSancion);
+            model.addAttribute("mensaje", "Sanción registrada correctamente.");
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+        }
+        return "admin/sanciones"; // Siempre retorna a la página de sanciones
+    }
+    
+    @GetMapping("/admin/reportedesanciones")
+    public String mostrarReporteSanciones(Model model) {
+        List<Sancion> sanciones = sancionService.listarSanciones();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        // Formatear fechas y asignarlas a propiedades transitorias
+        sanciones.forEach(sancion -> {
+            sancion.setFechaInicioFormatted(
+                sancion.getFechaInicio() != null ? sancion.getFechaInicio().format(formatter) : "N/A"
+            );
+            sancion.setFechaFinFormatted(
+                sancion.getFechaFin() != null ? sancion.getFechaFin().format(formatter) : "N/A"
+            );
+        });
+
+        model.addAttribute("sanciones", sanciones);
+        return "admin/reportedesanciones";
+    }
+
+    @GetMapping("/admin/eliminar-sancion/{id}")
+    public String eliminarSancion(@PathVariable Long id, Model model) {
+        try {
+            sancionService.eliminarSancion(id);
+            model.addAttribute("mensaje", "Sanción eliminada correctamente.");
+        } catch (Exception e) {
+            model.addAttribute("error", "Ocurrió un error al intentar eliminar la sanción.");
+        }
+        return "redirect:/admin/reportedesanciones";
+    }
+
+    
+    
+}

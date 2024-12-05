@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes</title>
+    <!-- Estilos de la plantilla SB Admin 2 -->
+    <link rel="stylesheet" href="/css/sb-admin-2.min.css">
+    <link rel="stylesheet" href="/vendor/fontawesome-free/css/all.min.css">
+</head>
+<body id="page-top">
+    <!-- Contenedor principal -->
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <!-- Título del sidebar -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
+                <div class="sidebar-brand-icon">
+                    <i class="fas fa-book-reader"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Biblioteca</div>
+            </a>
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+            <!-- Opciones de navegación -->
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/libros">
+                    <i class="fas fa-book"></i>
+                    <span>Gestión de Libros</span>
+                </a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/admin/clientes">
+                    <i class="fas fa-user"></i>
+                    <span>Gestión de Clientes</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/prestamos">
+                    <i class="fas fa-handshake"></i>
+                    <span>Gestión de Préstamos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/sanciones">
+                    <i class="fas fa-fw fa-exclamation-triangle"></i>
+                    <span>Gestión de Sanciones</span>
+                </a>
+            </li>
+        </ul>
+        <!-- Fin Sidebar -->
+
+        <!-- Contenido Principal -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <!-- Barra de Navegación -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <h1 class="h3 mb-0 text-gray-800">Gestión de Clientes</h1>
+                </nav>
+
+                <!-- Contenido de la Página -->
+                <div class="container-fluid">
+                    <!-- Formulario de búsqueda -->
+                    <form method="get" action="/admin/clientes" class="mb-3">
+                        <div class="input-group">
+                            <input type="text" name="filtro" placeholder="Buscar por DNI, nombre o correo" 
+                                   class="form-control" th:value="${param.filtro != null ? param.filtro[0] : ''}"/>
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i> Buscar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Listado de Clientes -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Listado de Clientes</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>DNI</th>
+                                            <th>Nombre</th>
+                                            <th>Apellido</th>
+                                            <th>Correo</th>
+                                            <th>Rol</th>
+                                            <th>Sanción</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="cliente : ${clientes}">
+                                            <td th:text="${cliente.dni}"></td>
+                                            <td th:text="${cliente.nombre}"></td>
+                                            <td th:text="${cliente.apellido}"></td>
+                                            <td th:text="${cliente.correo}"></td>
+                                            <td th:text="${cliente.rol}"></td>
+                                            <td th:text="${cliente.tieneSancion ? 'Sí' : 'No'}"></td>
+                                            <td th:text="${cliente.habilitado ? 'Habilitado' : 'Inhabilitado'}"></td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a th:href="@{/admin/clientes/editar/{id}(id=${cliente.id})}" 
+                                                       class="btn btn-sm btn-warning">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <a th:href="@{/admin/clientes/eliminar/{id}(id=${cliente.id})}" 
+                                                       class="btn btn-sm btn-danger" 
+                                                       onclick="return confirm('¿Está seguro de eliminar este cliente?')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                    <div class="btn-group" role="group">
+                                                        <a th:href="@{/admin/clientes/sancionar/{id}(id=${cliente.id})}" 
+                                                           th:if="${!cliente.tieneSancion}" 
+                                                           class="btn btn-sm btn-dark">
+                                                            <i class="fas fa-ban"></i>
+                                                        </a>
+                                                        <a th:href="@{/admin/clientes/levantar-sancion/{id}(id=${cliente.id})}" 
+                                                           th:if="${cliente.tieneSancion}" 
+                                                           class="btn btn-sm btn-success">
+                                                            <i class="fas fa-check-circle"></i>
+                                                        </a>
+                                                        <a th:href="@{/admin/clientes/inhabilitar/{id}(id=${cliente.id})}" 
+                                                           th:if="${cliente.habilitado}" 
+                                                           class="btn btn-sm btn-secondary">
+                                                            <i class="fas fa-lock"></i>
+                                                        </a>
+                                                        <a th:href="@{/admin/clientes/habilitar/{id}(id=${cliente.id})}" 
+                                                           th:if="${!cliente.habilitado}" 
+                                                           class="btn btn-sm btn-primary">
+                                                            <i class="fas fa-lock-open"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de dependencias -->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sb-admin-2.min.js"></script>
+</body>
+</html>

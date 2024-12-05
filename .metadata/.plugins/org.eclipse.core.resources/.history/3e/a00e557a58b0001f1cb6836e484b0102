@@ -1,0 +1,117 @@
+package com.trilce.Bibloteca.controladores;
+
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.trilce.Bibloteca.Entidades.Libro;
+import com.trilce.Bibloteca.repositorio.LibroRepository;
+import com.trilce.Bibloteca.servicios.LibroService;
+
+@Controller
+public class LibroController {
+
+    @Autowired
+    private LibroRepository libroRepository;
+    private LibroService libroService;
+    @PostMapping("/guardarLibro")
+    public String guardarLibro(@Validated @ModelAttribute Libro libro, @RequestParam("imagen") MultipartFile imagen, Model model) {
+        if (!imagen.isEmpty()) {
+            // Obtiene el nombre original del archivo
+            String imagenNombre = imagen.getOriginalFilename();
+
+            // Ruta donde deseas guardar el archivo en el servidor (directorio static/imagenes)
+            Path ruta = Paths.get("src/main/resources/static/imagenes/" + imagenNombre);
+
+            try {
+                // Guarda el archivo en el sistema de archivos
+                Files.write(ruta, imagen.getBytes());
+
+                // Guarda solo el nombre del archivo en la base de datos
+                libro.setImagen(imagenNombre);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                model.addAttribute("error", "Error al guardar la imagen.");
+                return "error";  // Redirige a una página de error si ocurre un problema
+            }
+        }
+
+        // Guarda el libro en la base de datos
+        libroRepository.save(libro);
+
+        return "redirect:/libros";  // Redirige a la lista de libros o donde desees
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+   
+    // Mostrar la lista de libros
+    @GetMapping
+    public String listarLibros(Model model) {
+        List<Libro> libros = libroService.listarLibros();
+        model.addAttribute("libros", libros);
+        return "admin/libros"; // Vista de la lista de libros
+    }
+
+    // Mostrar detalles del libro
+    @GetMapping("/{id}")
+    public String verLibro(@PathVariable Long id, Model model) {
+        Libro libro = libroService.obtenerLibro(id);
+        model.addAttribute("libro", libro);
+        return "admin/verLibro"; // Utiliza la vista actualizada
+    }
+
+    // Mostrar el formulario para editar el libro
+    @GetMapping("/{id}/editar")
+    public String editarLibro(@PathVariable Long id, Model model) {
+        Libro libro = libroService.obtenerLibro(id);
+        model.addAttribute("libro", libro);
+        return "admin/libroFormulario"; // Vista para editar libro
+    }
+
+ 
+    
+    
+    
+    
+    
+    
+    
+    // Eliminar un libro
+    @PostMapping("/{id}/eliminar")
+    public String eliminarLibro(@PathVariable Long id) {
+        libroService.eliminarLibro(id);
+        return "redirect:/admin/libros"; // Redirige a la lista de libros después de eliminar
+    }
+
+    // Mostrar el formulario para un nuevo libro
+    @GetMapping("/nuevo")
+    public String nuevoLibro(Model model) {
+        model.addAttribute("libro", new Libro()); // Nuevo libro vacío
+        return "admin/libroFormulario"; // Vista del formulario de nuevo libro
+    }
+}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Sanciones</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">Gestión de Sanciones</h1>
+        
+        <!-- Tabla de sanciones -->
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                Lista de Sanciones
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>DNI Usuario</th>
+                            <th>Motivo</th>
+                            <th>Fecha Inicio</th>
+                            <th>Fecha Fin</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Iterar sobre las sanciones -->
+                        <tr th:each="sancion : ${sanciones}">
+                            <td th:text="${sancion.id}"></td>
+                            <td th:text="${sancion.dniUsuario}"></td>
+                            <td th:text="${sancion.motivo}"></td>
+                            <td th:text="${sancion.fechaInicio}"></td>
+                            <td th:text="${sancion.fechaFin}"></td>
+                            <td>
+                                <!-- Botón para eliminar -->
+                                <form th:action="@{'/admin/sanciones/' + ${sancion.id} + '/eliminar'}" method="post">
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        Eliminar
+                                        
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        <!-- Mostrar mensaje si no hay sanciones -->
+                        <tr th:if="${sanciones.empty}">
+                            <td colspan="6" class="text-center">No hay sanciones registradas.</td>
+                        </tr>
+                        
+                        <td>
+    <!-- Botón que abre el modal -->
+    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" th:data-bs-target="'#modalEliminar' + ${sancion.id}">
+        Eliminar
+    </button>
+    
+    <!-- Modal para confirmar eliminación -->
+    <div class="modal fade" th:id="'modalEliminar' + ${sancion.id}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Está seguro que desea eliminar esta sanción?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form th:action="@{'/admin/sanciones/' + ${sancion.id} + '/eliminar'}" method="post">
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</td>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

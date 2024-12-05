@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes</title>
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="/css/sb-admin-2.min.css">
+    <link rel="stylesheet" href="/vendor/fontawesome-free/css/all.min.css">
+</head>
+<body id="page-top">
+    <div class="container">
+        <h1>Gestión de Clientes</h1>
+
+       <!-- Formulario de búsqueda -->
+<form method="get" action="/admin/clientes" class="mb-3">
+    <input type="text" name="filtro" placeholder="Buscar por nombre o correo" class="form-control" />
+    <button type="submit" class="btn btn-primary mt-2">Buscar</button>
+</form>
+
+<!-- Listado de Clientes -->
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Sanción</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="cliente : ${clientes}">
+            <td th:text="${cliente.nombre}"></td>
+            <td th:text="${cliente.apellido}"></td>
+            <td th:text="${cliente.correo}"></td>
+            <td th:text="${cliente.rol}"></td>
+            <td th:text="${cliente.tieneSancion ? 'Sí' : 'No'}"></td>
+            <td>
+                <a th:href="@{/admin/clientes/editar/{id}(id=${cliente.id})}" class="btn btn-warning">Editar</a>
+                <a th:href="@{/admin/clientes/eliminar/{id}(id=${cliente.id})}" class="btn btn-danger">Eliminar</a>
+                <a th:href="@{/admin/clientes/sancionar/{id}(id=${cliente.id})}" th:if="${!cliente.tieneSancion}" class="btn btn-dark">Sancionar</a>
+                <a th:href="@{/admin/clientes/levantar-sancion/{id}(id=${cliente.id})}" th:if="${cliente.tieneSancion}" class="btn btn-success">Levantar Sanción</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+    </div>
+
+    <!-- Scripts de dependencias -->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sb-admin-2.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+package com.trilce.Bibloteca.controladores;
+
+import java.io.IOException;
+
+import java.util.List;
+
+
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.trilce.Bibloteca.Entidades.Libro;
+import com.trilce.Bibloteca.servicios.LibroService;
+
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequestMapping("/admin/libros")
+@RequiredArgsConstructor
+public class LibroController {
+
+    private final LibroService libroService;
+
+    // Mostrar la lista de libros
+    @GetMapping
+    public String listarLibros(Model model) {
+        List<Libro> libros = libroService.listarLibros();
+        model.addAttribute("libros", libros);
+        return "admin/libros"; // Vista de la lista de libros
+    }
+
+    // Mostrar detalles del libro
+    @GetMapping("/{id}")
+    public String verLibro(@PathVariable Long id, Model model) {
+        Libro libro = libroService.obtenerLibro(id);
+        model.addAttribute("libro", libro);
+        return "admin/verLibro"; // Utiliza la vista actualizada
+    }
+
+    // Mostrar el formulario para editar el libro
+    @GetMapping("/{id}/editar")
+    public String editarLibro(@PathVariable Long id, Model model) {
+        Libro libro = libroService.obtenerLibro(id);
+        model.addAttribute("libro", libro);
+        return "admin/libroFormulario"; // Vista para editar libro
+    }
+
+    // Guardar o actualizar el libro con imagen
+    @PostMapping("/guardar")
+    public String guardarLibro(@ModelAttribute Libro libro, @RequestParam("imagen") MultipartFile imagen) {
+        try {
+            // Si se recibe una imagen, asignamos el nombre del archivo al objeto libro
+            if (imagen != null && !imagen.isEmpty()) {
+                libro.setImagen(imagen.getOriginalFilename());  // Guardamos solo el nombre del archivo
+            }
+
+            // Llamamos al servicio para agregar el libro
+            libroService.agregarLibro(libro, imagen);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "error";  // Manejo de error si algo falla
+        }
+
+        return "redirect:/admin/libros";  // Redirige a la página de gestión de libros después de guardar
+    }
+
+
+
+
+    // Eliminar un libro
+    @PostMapping("/{id}/eliminar")
+    public String eliminarLibro(@PathVariable Long id) {
+        libroService.eliminarLibro(id);
+        return "redirect:/admin/libros"; // Redirige a la lista de libros después de eliminar
+    }
+
+    // Mostrar el formulario para un nuevo libro
+    @GetMapping("/nuevo")
+    public String nuevoLibro(Model model) {
+        model.addAttribute("libro", new Libro()); // Nuevo libro vacío
+        return "admin/libroFormulario"; // Vista del formulario de nuevo libro
+    }
+}

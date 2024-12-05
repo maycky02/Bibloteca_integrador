@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Reservas</title>
+    <!-- Enlace a Bootstrap CSS local -->
+    <link href="/static/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <!-- Enlace a FontAwesome CSS local -->
+    <link href="/static/vendor/fontawesome/all.min.css" rel="stylesheet">
+    <!-- Enlace a SB Admin 2 CSS local -->
+    <link href="/static/vendor/sb-admin-2/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Biblioteca</div>
+            </a>
+            <hr class="sidebar-divider my-0">
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/libros">
+                    <i class="fas fa-book"></i>
+                    <span>Gestión de Libros</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/reservas">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Gestión de Reservas</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/prestamos">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Gestión de Préstamos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/sanciones">
+                    <i class="fas fa-ban"></i>
+                    <span>Gestión de Sanciones</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/reportedesanciones">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Reporte de Sanciones</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </a>
+            </li>
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <h1 class="h3 mb-0 text-gray-800">Gestión de Reservas</h1>
+                </nav>
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    <h1 class="text-center mb-4">Gestión de Reservas</h1>
+
+                    <!-- Filtro por DNI -->
+                    <form th:action="@{/admin/reservas}" method="get" class="mb-4">
+                        <div class="input-group">
+                            <input type="text" name="dni" class="form-control" placeholder="Filtrar por DNI" th:value="${dni}" />
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">Filtrar</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Mensajes de éxito -->
+                    <div th:if="${success}" class="alert alert-success">
+                        <span th:text="${success}"></span>
+                    </div>
+
+                    <!-- Tabla de Reservas -->
+                    <table class="table table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Libro</th>
+                                <th>Usuario (DNI)</th>
+                                <th>Nombre y Apellido</th>
+                                <th>Fecha de Reserva</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="reserva : ${reservas}">
+                                <td th:text="${reserva.libro.titulo}"></td>
+                                <td th:text="${reserva.usuario != null ? reserva.usuario.dni : 'Sin usuario'}"></td>
+                                <td th:text="${reserva.usuario != null ? reserva.usuario.nombre + ' ' + reserva.usuario.apellido : 'Sin usuario'}"></td>
+                                <td th:text="${reserva.fechaReserva}"></td>
+                                <td th:text="${reserva.estado}"></td>
+                                <td>
+                                    <!-- Formulario para aprobar la reserva -->
+                                    <form th:action="@{/admin/reservas/{id}/aprobar(id=${reserva.id})}" method="post">
+                                        <button type="submit" class="btn btn-success" th:disabled="${reserva.estado != 'Pendiente'}">
+                                            <i class="fas fa-check"></i> Aprobar
+                                        </button>
+                                    </form>
+
+                                    <!-- Formulario para rechazar la reserva -->
+                                    <form th:action="@{/admin/reservas/{id}/rechazar(id=${reserva.id})}" method="post" class="mt-2">
+                                        <button class="btn btn-danger" type="submit" th:disabled="${reserva.estado != 'Pendiente'}">
+                                            <i class="fas fa-times"></i> Rechazar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- End of Page Content -->
+            </div>
+            <!-- End of Content Wrapper -->
+        </div>
+        <!-- End of Page Wrapper -->
+    </div>
+
+    <!-- Scripts -->
+    <!-- Enlace a jQuery Slim local -->
+    <script src="/static/vendor/jquery/jquery.slim.min.js"></script>
+    <!-- Enlace a Bootstrap JS local -->
+    <script src="/static/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+    <!-- Enlace a jQuery Easing local -->
+    <script src="/static/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <!-- Enlace a SB Admin 2 JS local -->
+    <script src="/static/vendor/sb-admin-2/sb-admin-2.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+package com.trilce.Bibloteca.scheduler;
+
+import com.trilce.Bibloteca.Entidades.Prestamo;
+import com.trilce.Bibloteca.servicios.PrestamoService;
+import com.trilce.Bibloteca.servicios.SancionService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Component
+@RequiredArgsConstructor
+public class PrestamoScheduler {
+
+    private final PrestamoService prestamoService;
+    private final SancionService sancionService;
+
+    @Scheduled(cron = "0 0 0 * * *") // Ejecuta a medianoche
+    public void verificarPrestamosVencidos() {
+        List<Prestamo> vencidos = prestamoService.listarPrestamosVencidos();
+        for (Prestamo prestamo : vencidos) {
+            if (prestamo.getFechaDevolucion().isBefore(LocalDate.now()) && !prestamo.isDevuelto()) {
+                sancionService.crearSancion(prestamo.getUsuario(), "Demoró en entregar", 14);
+            }
+        }
+    }
+}

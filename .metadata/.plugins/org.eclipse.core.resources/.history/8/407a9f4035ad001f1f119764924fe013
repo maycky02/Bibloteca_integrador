@@ -1,0 +1,12 @@
+package com.trilce.Bibloteca.repositorio;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import com.trilce.Bibloteca.Entidades.Cliente;
+import java.util.List;
+
+@Repository
+public interface ClienteRepository extends JpaRepository<Cliente, Long> {
+    List<Cliente> findByNombreContainingOrCorreoContaining(String nombre, String correo);
+    Cliente findByDni(String dni); // Método para buscar por DNI
+}

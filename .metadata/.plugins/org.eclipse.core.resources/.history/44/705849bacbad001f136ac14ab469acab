@@ -1,0 +1,29 @@
+package com.trilce.Bibloteca.servicios;
+
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Reserva;
+import com.trilce.Bibloteca.repositorio.ReservaRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class ReservaService {
+
+    private final ReservaRepository reservaRepository;
+
+    public void aprobarReserva(Long id) {
+        Reserva reserva = reservaRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada"));
+        reserva.setEstado("Aprobada");
+        reservaRepository.save(reserva);
+    }
+
+    public void rechazarReserva(Long id) {
+        Reserva reserva = reservaRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada"));
+        reserva.setEstado("Rechazada");
+        reservaRepository.save(reserva);
+    }
+}

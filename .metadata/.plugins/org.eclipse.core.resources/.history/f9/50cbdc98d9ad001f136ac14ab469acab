@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Préstamos</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Gestión de Préstamos</h1>
+        <form action="/admin/prestamos/registrar" method="post" class="mb-3">
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="number" name="usuarioId" class="form-control" placeholder="ID Usuario" required>
+                </div>
+                <div class="col-md-4">
+                    <input type="number" name="libroId" class="form-control" placeholder="ID Libro" required>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary btn-block">Registrar Préstamo</button>
+                </div>
+            </div>
+        </form>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Libro</th>
+                    <th>Fecha Devolución</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="prestamo : ${prestamos}">
+                    <td th:text="${prestamo.id}"></td>
+                    <td th:text="${prestamo.usuario.nombre}"></td>
+                    <td th:text="${prestamo.libro.titulo}"></td>
+                    <td th:text="${prestamo.fechaDevolucion}"></td>
+                    <td th:text="${prestamo.estado}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

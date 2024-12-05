@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Préstamos</title>
+</head>
+<body>
+    <h1>Lista de Préstamos</h1>
+
+    <div th:if="${prestamos.isEmpty()}">
+        <p>No hay préstamos registrados.</p>
+    </div>
+
+    <div th:if="${!prestamos.isEmpty()}">
+        <table>
+            <thead>
+                <tr>
+                    <th>Libro</th>
+                    <th>Usuario</th>
+                    <th>Fecha de Préstamo</th>
+                    <th>Fecha de Devolución</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="prestamo : ${prestamos}">
+                    <td th:text="${prestamo.libro.titulo}">Título del Libro</td>
+                    <td th:text="${prestamo.usuario.nombre}">Nombre del Usuario</td>
+                    <td th:text="${prestamo.fechaPrestamo}">Fecha de Préstamo</td>
+                    <td th:text="${prestamo.fechaDevolucion}">Fecha de Devolución</td>
+                    <td th:text="${prestamo.estado}">Estado</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

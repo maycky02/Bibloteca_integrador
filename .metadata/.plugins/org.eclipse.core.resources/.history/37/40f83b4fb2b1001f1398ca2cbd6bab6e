@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Libros</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+    /* Fondo con imagen */
+   body {
+    background-image: url('/img/Fondo_bibloteca.jpg');
+    background-size: cover; /* Para que ocupe todo el fondo */
+    background-repeat: no-repeat;
+    background-position: center;
+    font-family: 'Arial', sans-serif;
+}
+
+
+    /* Barra de navegación */
+    .navbar {
+        background-color: rgba(244, 162, 97, 0.9); /* Naranja con transparencia */
+        border-bottom: 2px solid #e76f51; /* Línea de separación */
+    }
+
+    .navbar a {
+        color: #ffffff !important;
+        font-weight: bold;
+    }
+
+    .navbar a:hover {
+        color: #e76f51;
+        text-decoration: underline;
+    }
+
+    /* Título */
+    h1 {
+        color: #ffffff; /* Blanco */
+        font-weight: bold;
+        font-size: 2.5rem;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Sombras para destacar el texto */
+    }
+
+    /* Estilo de las tarjetas */
+    .card {
+        background-color: #ffffff; /* Blanco elegante */
+        border-radius: 15px;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-body {
+        flex-grow: 1;
+    }
+
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-img-top {
+        object-fit: contain; /* Asegura que la imagen se ajuste sin recortarse */
+        width: 100%;
+        height: 200px; /* Mantiene la altura constante */
+    }
+
+    .card-img-top:hover {
+        transform: scale(1.05);
+    }
+
+    /* Modal */
+    .modal-content {
+        background-color: #f1f1f1;
+        border-radius: 20px;
+        color: #333;
+    }
+
+    .modal-header {
+        background-color: #f4a261;
+        color: white;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+
+    .modal-footer {
+        background-color: #f4a261;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+
+    /* Botones */
+    .btn-primary {
+        background-color: #f4a261;
+        border-color: #f4a261;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #e76f51;
+        border-color: #e76f51;
+    }
+
+    .btn-info {
+        background-color: #ffffff;
+        border-color: #f4a261;
+        color: #f4a261;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-info:hover {
+        background-color: #f4a261;
+        color: white;
+        border-color: #e76f51;
+    }
+
+    /* Pie de página */
+    footer {
+        background-color: rgba(244, 162, 97, 0.9); /* Transparencia para integrarse con el fondo */
+        color: #ffffff;
+        padding: 20px;
+        text-align: center;
+        border-top: 3px solid #e76f51;
+    }
+
+    footer a {
+        color: #ffffff;
+    }
+
+    footer a:hover {
+        text-decoration: underline;
+    }
+
+    /* Estilo de los títulos en las tarjetas */
+    .card-title {
+        color: #f4a261; /* Naranja suave */
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    .card-subtitle {
+        color: #2c3e50; /* Gris oscuro */
+        font-weight: normal;
+        font-size: 1rem;
+    }
+</style>
+
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Biblioteca Trilce</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/lector/perfil">Mi Perfil</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="/lector/historial">Historial de Préstamos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Cerrar Sesión</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+    <!-- Contenedor principal -->
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Catálogo de Libros</h1>
+
+        <!-- Mostrar mensaje si el usuario está sancionado -->
+        <div th:if="${sancionMensaje != null}" class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Advertencia:</strong> <span th:text="${sancionMensaje}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Fila de libros -->
+        <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+            <!-- Iterar sobre los libros -->
+            <div class="col" th:each="libro : ${libros}">
+                <div class="card shadow-sm border-light">
+                    <!-- Imagen del libro -->
+                    <img th:src="@{/img_libros/{imagen}(imagen=${libro.imagen})}" class="card-img-top" alt="Portada del libro">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${libro.titulo}">Título del Libro</h5>
+                        <h6 class="card-subtitle mb-2 text-muted" th:text="'Autor: ' + ${libro.autor}">Autor</h6>
+                        <p class="card-text" th:text="'Stock: ' + ${libro.stock}">Stock</p>
+                        <!-- Botón de reserva, deshabilitado si el usuario está sancionado -->
+                        <a th:href="@{/lector/reservar/{id}(id=${libro.id})}" class="btn btn-primary w-100"
+                           th:disabled="${sancionMensaje != null}">Reservar</a>
+                        <!-- Botón para ver más detalles del libro -->
+                        <button type="button" class="btn btn-info w-100 mt-2" data-bs-toggle="modal" data-bs-target="#sinopsisModal"
+                            th:data-id="${libro.id}" 
+                            th:data-titulo="${libro.titulo}" 
+                            th:data-autor="${libro.autor}" 
+                            th:data-editorial="${libro.editorial}" 
+                            th:data-isbn="${libro.isbn}" 
+                            th:data-stock="${libro.stock}" 
+                            th:data-imagen="@{/img_libros/{imagen}(imagen=${libro.imagen})}"
+                            th:data-sinopsis="${libro.sinopsis}">Ver Más</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Sinopsis -->
+    <div class="modal fade" id="sinopsisModal" tabindex="-1" aria-labelledby="sinopsisModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sinopsisModalLabel">Detalles del Libro</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="modalImagen" class="img-fluid mb-3" src="" alt="Imagen del libro" style="max-height: 200px; object-fit: contain;">
+                    <p><strong>Título:</strong> <span id="modalTitulo"></span></p>
+                    <p><strong>Autor:</strong> <span id="modalAutor"></span></p>
+                    <p><strong>Editorial:</strong> <span id="modalEditorial"></span></p>
+                    <p><strong>ISBN:</strong> <span id="modalIsbn"></span></p>
+                    <p><strong>Stock:</strong> <span id="modalStock"></span></p>
+                    <p><strong>Sinopsis:</strong></p>
+                    <p id="modalSinopsis"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <a id="modalReservarBtn" class="btn btn-primary">Reservar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script>
+        // Rellenar los detalles del modal
+        var modal = document.getElementById('sinopsisModal');
+        modal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            document.getElementById('modalTitulo').textContent = button.getAttribute('data-titulo');
+            document.getElementById('modalAutor').textContent = button.getAttribute('data-autor');
+            document.getElementById('modalEditorial').textContent = button.getAttribute('data-editorial');
+            document.getElementById('modalIsbn').textContent = button.getAttribute('data-isbn');
+            document.getElementById('modalStock').textContent = button.getAttribute('data-stock');
+            document.getElementById('modalSinopsis').textContent = button.getAttribute('data-sinopsis');
+            document.getElementById('modalImagen').src = button.getAttribute('data-imagen');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+package com.trilce.Bibloteca.repositorio;
+
+import com.trilce.Bibloteca.Entidades.Reserva;
+
+public class ReservaRepository extends JpaRepository<Reserva, Long> {
+
+}

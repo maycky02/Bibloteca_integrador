@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Reservas</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Gestión de Reservas</h1>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Libro</th>
+                    <th>Usuario</th>
+                    <th>Fecha de Reserva</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="reserva : ${reservas}">
+                    <td th:text="${reserva.libro.titulo}"></td>
+                    <td th:text="${reserva.usuario.nombre}"></td>
+                    <td th:text="${reserva.fechaReserva}"></td>
+                    <td th:text="${reserva.estado}"></td>
+                    <td>
+                        <form th:action="@{/admin/reservas/{id}/aprobar(id=${reserva.id})}" method="post">
+                            <button class="btn btn-success" type="submit">Aprobar</button>
+                        </form>
+                        <form th:action="@{/admin/reservas/{id}/rechazar(id=${reserva.id})}" method="post" class="mt-2">
+                            <button class="btn btn-danger" type="submit">Rechazar</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

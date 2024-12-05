@@ -1,0 +1,25 @@
+@Entity
+@Data
+public class Prestamo {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    private Libro libro;
+
+    @ManyToOne
+    private Usuario usuario;
+
+    private LocalDate fechaPrestamo;
+
+    private LocalDate fechaDevolucion;
+
+    private String estado; // Activo, Devuelto
+
+    // Método que verifica si el préstamo ha sido devuelto
+    public boolean isDevuelto() {
+        return "Devuelto".equals(this.estado);
+    }
+}

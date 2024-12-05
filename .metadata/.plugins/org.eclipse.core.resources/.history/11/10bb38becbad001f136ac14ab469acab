@@ -1,0 +1,43 @@
+package com.trilce.Bibloteca.servicios;
+
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Reserva;
+import com.trilce.Bibloteca.repositorio.ReservaRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class ReservaService {
+
+    private final ReservaRepository reservaRepository;
+
+    public void aprobarReserva(Long id) {
+        Reserva reserva = reservaRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada"));
+        reserva.setEstado("Aprobada");
+        reservaRepository.save(reserva);
+    }
+
+    public void rechazarReserva(Long id) {
+        Reserva reserva = reservaRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada"));
+        reserva.setEstado("Rechazada");
+        reservaRepository.save(reserva);
+    }
+    public void cancelarReservasVencidas() {
+        // Obtener todas las reservas
+        List<Reserva> todasLasReservas = reservaRepository.findAll();
+
+        // Filtrar las reservas vencidas
+        List<Reserva> reservasVencidas = todasLasReservas.stream()
+            .filter(reserva -> reserva.getFechaReserva().isBefore(LocalDate.now()) && "Pendiente".equals(reserva.getEstado()))
+            .collect(Collectors.toList());
+
+        // Cambiar el estado de las reservas vencidas a "Cancelada"
+        for (Reserva reserva : reservasVencidas) {
+            reserva.setEstado("Cancelada"); // O eliminar la reserva
+            reservaRepository.save(reserva); // Guardar el cambio
+        }
+}

@@ -1,0 +1,22 @@
+@Entity
+@Data
+public class Sancion {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+
+    private String motivo;
+
+    private LocalDate fechaInicio;
+
+    private LocalDate fechaFin;
+
+    public long getDiasDeSancion() {
+        return ChronoUnit.DAYS.between(fechaInicio, fechaFin);
+    }
+}

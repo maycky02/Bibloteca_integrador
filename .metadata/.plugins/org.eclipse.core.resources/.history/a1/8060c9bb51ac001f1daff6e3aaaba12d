@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Libros</title>
+    <!-- Estilos de la plantilla SB Admin 2 -->
+    <link rel="stylesheet" href="/css/sb-admin-2.min.css">
+</head>
+<body id="page-top">
+    <!-- Contenedor principal -->
+    <div id="wrapper">
+        <!-- Contenido principal -->
+        <div class="container-fluid">
+            <h1 class="h3 mb-4 text-gray-800">Gestión de Libros</h1>
+
+            <!-- Formulario para Añadir/Editar Libro -->
+            <form th:action="@{/admin/libros}" method="post" enctype="multipart/form-data">
+                <input type="hidden" th:if="${libro != null}" name="id" th:value="${libro.id}" />
+                <div class="form-group">
+                    <label for="titulo">Título:</label>
+                    <input type="text" id="titulo" name="titulo" th:value="${libro != null ? libro.titulo : ''}" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="autor">Autor:</label>
+                    <input type="text" id="autor" name="autor" th:value="${libro != null ? libro.autor : ''}" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="imagen">Portada:</label>
+                    <input type="file" id="imagen" name="imagen" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </form>
+
+            <hr>
+
+            <!-- Listado de Libros -->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Portada</th>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>Disponibilidad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="libro : ${libros}">
+                        <td><img th:src="${libro.imagenUrl}" alt="Portada" width="50"></td>
+                        <td th:text="${libro.titulo}"></td>
+                        <td th:text="${libro.autor}"></td>
+                        <td th:text="${libro.disponibilidad}"></td>
+                        <td>
+                            <a th:href="@{/admin/libros/eliminar/{id}(id=${libro.id})}" class="btn btn-danger">Eliminar</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Scripts de la plantilla SB Admin 2 -->
+    <script src="/js/sb-admin-2.min.js"></script>
+</body>
+</html>

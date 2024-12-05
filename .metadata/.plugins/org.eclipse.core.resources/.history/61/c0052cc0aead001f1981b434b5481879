@@ -1,0 +1,27 @@
+package com.trilce.Bibloteca.Entidades;
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+import java.time.LocalDateTime;
+
+@Data
+@Entity
+@Table(name = "reservas")
+public class Reserva {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    private Lector lector;
+
+    @ManyToOne
+    private Libro libro;
+
+    private LocalDateTime fechaReserva;
+
+    private boolean recogida = false;
+
+    private LocalDateTime vencimientoReserva; // 24 horas desde la reserva
+}

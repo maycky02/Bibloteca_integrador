@@ -1,0 +1,32 @@
+package com.trilce.Bibloteca.Entidades;
+
+import java.util.List;
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+@Data
+@Entity
+public class Cliente {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nombre;
+    private String apellido;
+    private String correo;
+
+    private boolean tieneSancion;
+
+    @Enumerated(EnumType.STRING)
+    private Rol rol;
+
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Prestamo> prestamos;
+
+    public enum Rol {
+        ADMINISTRADOR,
+        BIBLIOTECARIO,
+        LECTOR
+    }
+}

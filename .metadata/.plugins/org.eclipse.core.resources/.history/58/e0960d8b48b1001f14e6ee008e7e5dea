@@ -1,0 +1,36 @@
+package com.trilce.Bibloteca.servicios;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Historial;
+import com.trilce.Bibloteca.Entidades.Prestamo;
+import com.trilce.Bibloteca.Entidades.Reserva;
+
+@Service
+public class HistorialService {
+
+    @Autowired
+    private ReservaService reservaService;
+
+    @Autowired
+    private PrestamoService prestamoService;
+
+    public Historial obtenerHistorialPorUsuario(Long usuarioId) {
+        List<Reserva> reservas = reservaService.listarReservasPorUsuario(usuarioId);
+        List<Prestamo> prestamos = prestamoService.listarPrestamosPorUsuario(usuarioId);
+
+        Historial historial = new Historial();
+        historial.setReservas(reservas);
+        historial.setPrestamos(prestamos);
+
+        return historial;
+    }
+
+	public Historial findByUsuarioId(Long usuarioId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}

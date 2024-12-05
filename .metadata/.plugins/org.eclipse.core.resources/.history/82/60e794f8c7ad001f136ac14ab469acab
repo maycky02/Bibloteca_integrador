@@ -1,0 +1,38 @@
+package com.trilce.Bibloteca.servicios;
+
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Libro;
+import com.trilce.Bibloteca.repositorio.LibroRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class LibroService {
+    private final LibroRepository libroRepository;
+
+    public List<Libro> listarLibros() {
+        return libroRepository.findAll();
+    }
+
+    public Optional<Libro> buscarLibroPorId(Long id) {
+        return libroRepository.findById(id);
+    }
+
+    public Libro agregarLibro(Libro libro) {
+        return libroRepository.save(libro);
+    }
+
+    public Libro actualizarLibro(Libro libro) {
+        return libroRepository.save(libro);
+    }
+
+    public void eliminarLibro(Long id) {
+        libroRepository.deleteById(id);
+    }
+}

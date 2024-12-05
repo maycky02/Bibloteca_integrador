@@ -1,0 +1,13 @@
+package com.trilce.Bibloteca.repositorio;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.trilce.Bibloteca.Entidades.Reserva;
+@Repository
+public interface ReservaRepository extends JpaRepository<Reserva, Long> {
+    List<Reserva> findAll();  // Asegúrate de que esta consulta trae el usuario asociado.
+
+}

@@ -1,0 +1,10 @@
+package com.trilce.Bibloteca.repositorio;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.trilce.Bibloteca.Entidades.Sancion;
+
+@Repository
+public interface SancionRepositorio extends JpaRepository<Sancion, Long> {
+}

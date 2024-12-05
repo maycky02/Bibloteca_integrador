@@ -1,0 +1,12 @@
+package com.trilce.Bibloteca.repositorio;
+
+
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.trilce.Bibloteca.Entidades.Lector;
+
+public interface UsuarioRepository extends JpaRepository<Lector, Long> {
+    Optional<Lector> findByCorreo(String correo);
+}

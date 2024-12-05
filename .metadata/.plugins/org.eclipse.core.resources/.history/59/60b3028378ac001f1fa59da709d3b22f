@@ -1,0 +1,75 @@
+package com.trilce.Bibloteca.controladores;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.trilce.Bibloteca.Entidades.Cliente;
+import com.trilce.Bibloteca.servicios.ClienteService;
+
+import jakarta.validation.Valid;
+
+@Controller
+@RequestMapping("/admin/clientes")
+public class ClienteController {
+
+    @Autowired
+    private ClienteService clienteService;
+
+    @GetMapping
+    public String listarClientes(@RequestParam(required = false) String filtro, @RequestParam(required = false) Long editarId, Model model) {
+        if (filtro != null && !filtro.isEmpty()) {
+            model.addAttribute("clientes", clienteService.buscarClientes(filtro));
+        } else {
+            model.addAttribute("clientes", clienteService.listarClientes());
+        }
+
+        if (editarId != null) {
+            Cliente cliente = clienteService.obtenerClientePorId(editarId);
+            model.addAttribute("clienteEdicion", cliente);  // Añadir cliente para edición
+        }
+
+        return "admin/clientes"; 
+    }
+    @PostMapping
+    public String guardarCliente(@Valid Cliente cliente, BindingResult result) {
+        if (result.hasErrors()) {
+            return "admin/clientes"; // Volver a la misma página si hay errores en la validación
+        }
+        clienteService.guardarCliente(cliente);
+        return "redirect:/admin/clientes";
+    }
+    @PostMapping
+    public String guardarCliente(@Valid Cliente cliente, BindingResult result) {
+        if (result.hasErrors()) {
+            return "admin/clientes"; // Si hay errores, volvemos a la página de clientes
+        }
+        clienteService.guardarCliente(cliente);
+        return "redirect:/admin/clientes"; // Redirigimos a la lista de clientes
+    }
+
+
+    @PostMapping("/eliminar/{id}")
+    public String eliminarCliente(@PathVariable Long id) {
+        clienteService.eliminarCliente(id);
+        return "redirect:/admin/clientes";
+    }
+
+    @GetMapping("/sancionar/{id}")
+    public String sancionarCliente(@PathVariable Long id) {
+        clienteService.cambiarSancion(id, true);
+        return "redirect:/admin/clientes";
+    }
+
+    @GetMapping("/levantar-sancion/{id}")
+    public String levantarSancion(@PathVariable Long id) {
+        clienteService.cambiarSancion(id, false);
+        return "redirect:/admin/clientes";
+    }
+}

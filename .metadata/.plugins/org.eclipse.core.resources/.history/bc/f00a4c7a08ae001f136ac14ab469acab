@@ -1,0 +1,66 @@
+package com.trilce.Bibloteca.servicios;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Libro;
+import com.trilce.Bibloteca.Entidades.Reserva;
+import com.trilce.Bibloteca.repositorio.ReservaRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class ReservaService {
+
+    private final ReservaRepository reservaRepository;
+
+    // Método para reservar un libro
+    public void reservarLibro(Reserva reserva) {
+        // Establecer la fecha de la reserva y su estado como "Pendiente"
+        reserva.setFechaReserva(LocalDate.now());
+        reserva.setEstado("Pendiente");
+        reservaRepository.save(reserva); // Guardar la reserva en la base de datos
+    }
+
+    // Aprobar una reserva
+    public void aprobarReserva(Long id) {
+        Reserva reserva = reservaRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada"));
+        reserva.setEstado("Aprobada");
+        reservaRepository.save(reserva);
+    }
+
+    // Rechazar una reserva
+    public void rechazarReserva(Long id) {
+        Reserva reserva = reservaRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada"));
+        reserva.setEstado("Rechazada");
+        reservaRepository.save(reserva);
+    }
+
+    // Cancelar reservas vencidas
+    public void cancelarReservasVencidas() {
+        // Obtener todas las reservas
+        List<Reserva> todasLasReservas = reservaRepository.findAll();
+
+        // Filtrar las reservas vencidas (condición para vencimiento)
+        List<Reserva> reservasVencidas = todasLasReservas.stream()
+            .filter(reserva -> reserva.getFechaReserva().isBefore(LocalDate.now()) && "Pendiente".equals(reserva.getEstado()))
+            .collect(Collectors.toList());
+
+        // Cambiar el estado de las reservas vencidas a "Cancelada"
+        for (Reserva reserva : reservasVencidas) {
+            reserva.setEstado("Cancelada");
+            reservaRepository.save(reserva);
+        }
+    }
+
+    // Listar todas las reservas
+    public List<Reserva> listarReservas() {
+        return reservaRepository.findAll();
+    }
+}

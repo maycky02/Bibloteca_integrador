@@ -1,0 +1,18 @@
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Motivo</th>
+            <th>Fecha Fin</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="sancion : ${sancionesActivas}">
+            <td th:text="${sancion.id}"></td>
+            <td th:text="${sancion.usuario.nombre}"></td>
+            <td th:text="${sancion.motivo}"></td>
+            <td th:text="${sancion.fechaFin}"></td>
+        </tr>
+    </tbody>
+</table>

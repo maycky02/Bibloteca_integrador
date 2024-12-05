@@ -1,0 +1,25 @@
+package com.trilce.Bibloteca.Entidades;
+
+import lombok.Data;
+
+import javax.persistence.*;
+import java.util.List;
+
+@Entity
+@Data  // Lombok genera automáticamente los getters, setters, toString, equals, hashCode
+public class Historial {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
+
+    @OneToMany(mappedBy = "historial", cascade = CascadeType.ALL)
+    private List<Reserva> reservas;
+
+    @OneToMany(mappedBy = "historial", cascade = CascadeType.ALL)
+    private List<Prestamo> prestamos;
+}

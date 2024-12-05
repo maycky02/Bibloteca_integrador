@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Sanciones</title>
+    <!-- Estilos de la plantilla SB Admin 2 -->
+    <link rel="stylesheet" href="/css/sb-admin-2.min.css">
+    <link rel="stylesheet" href="/vendor/fontawesome-free/css/all.min.css">
+</head>
+<body id="page-top">
+    <!-- Contenedor principal -->
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <!-- Título del sidebar -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
+                <div class="sidebar-brand-icon">
+                    <i class="fas fa-book-reader"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Biblioteca</div>
+            </a>
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+            <!-- Opciones de navegación -->
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/libros">
+                    <i class="fas fa-book"></i>
+                    <span>Gestión de Libros</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/clientes">
+                    <i class="fas fa-user"></i>
+                    <span>Gestión de Clientes</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/prestamos">
+                    <i class="fas fa-handshake"></i>
+                    <span>Gestión de Préstamos</span>
+                </a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/admin/sanciones">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Gestión de Sanciones</span>
+                </a>
+            </li>
+        </ul>
+        <!-- Fin Sidebar -->
+
+        <!-- Contenido Principal -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <!-- Barra de Navegación -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <h1 class="h3 mb-0 text-gray-800">Gestión de Sanciones</h1>
+                </nav>
+
+                <!-- Contenido de la Página -->
+                <div class="container-fluid">
+                    <!-- Formulario para Registrar Nueva Sanción -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Registrar Nueva Sanción</h6>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/admin/sanciones}" method="post">
+                                <div class="form-group">
+                                    <label for="clienteId">Seleccionar Cliente:</label>
+                                    <select id="clienteId" name="clienteId" required class="form-control">
+                                        <option th:each="cliente : ${clientes}" th:value="${cliente.id}" th:text="${cliente.nombre}"></option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-danger">Registrar Sanción</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Botón para Desbloquear Sanciones Vencidas -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Desbloquear Sanciones Vencidas</h6>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/admin/sanciones/desbloquear}" method="get">
+                                <button type="submit" class="btn btn-warning">Desbloquear</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de Sanciones Activas -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Sanciones Activas</h6>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th>Fecha de Inicio</th>
+                                        <th>Fecha de Fin</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="sancion : ${sanciones}">
+                                        <td th:text="${sancion.cliente.nombre}"></td>
+                                        <td th:text="${sancion.fechaInicio}"></td>
+                                        <td th:text="${sancion.fechaFin}"></td>
+                                        <td th:text="${sancion.activa ? 'Activa' : 'Inactiva'}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sb-admin-2.min.js"></script>
+</body>
+</html>

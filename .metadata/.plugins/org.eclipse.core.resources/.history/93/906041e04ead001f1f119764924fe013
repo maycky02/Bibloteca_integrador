@@ -1,0 +1,48 @@
+package com.trilce.Bibloteca.servicio.impl;
+
+import org.apache.catalina.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Administrador;
+import com.trilce.Bibloteca.Entidades.Lector;
+import com.trilce.Bibloteca.repositorio.AdministradorRepository;
+import com.trilce.Bibloteca.repositorio.LectorRepository;
+
+@Service
+public class UserDetailsServiceImpl implements UserDetailsService {
+
+    private final LectorRepository lectorRepository;
+    private final AdministradorRepository administradorRepository;
+
+    public UserDetailsServiceImpl(LectorRepository lectorRepository, AdministradorRepository administradorRepository) {
+        this.lectorRepository = lectorRepository;
+        this.administradorRepository = administradorRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        if (username.equals("admin")) {
+            Administrador admin = administradorRepository.findAll().stream().findFirst()
+                    .orElseThrow(() -> new UsernameNotFoundException("Administrador no encontrado"));
+            return User.builder()
+                    .username(admin.getUsuario())
+                    .password(admin.getContrasena())
+                    .roles("ADMIN")
+                    .build();
+        }
+
+        Lector lector = lectorRepository.findByCorreoInstitucional(username);
+        if (lector == null) {
+            throw new UsernameNotFoundException("Lector no encontrado");
+        }
+
+        return User.builder()
+                .username(lector.getCorreoInstitucional())
+                .password(lector.getContrasena())
+                .roles("LECTOR")
+                .build();
+    }
+}

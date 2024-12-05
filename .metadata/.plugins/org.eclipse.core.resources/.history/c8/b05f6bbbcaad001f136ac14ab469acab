@@ -1,0 +1,55 @@
+package com.trilce.Bibloteca.servicios;
+
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Libro;
+import com.trilce.Bibloteca.repositorio.LibroRepository;
+
+import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class LibroService {
+
+    private final LibroRepository libroRepository;
+
+    public Libro agregarLibro(Libro libro) {
+        return libroRepository.save(libro);
+    }
+
+    public Libro editarLibro(Long id, Libro libroActualizado) {
+        Libro libro = libroRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Libro no encontrado"));
+        libro.setTitulo(libroActualizado.getTitulo());
+        libro.setAutor(libroActualizado.getAutor());
+        libro.setFechaPublicacion(libroActualizado.getFechaPublicacion());
+        libro.setGenero(libroActualizado.getGenero());
+        libro.setSinopsis(libroActualizado.getSinopsis());
+        libro.setIsbn(libroActualizado.getIsbn());
+        libro.setImagen(libroActualizado.getImagen());
+        libro.setStock(libroActualizado.getStock());
+        return libroRepository.save(libro);
+    }
+
+    public void eliminarLibro(Long id) {
+        if (!libroRepository.existsById(id)) {
+            throw new IllegalArgumentException("Libro no encontrado");
+        }
+        libroRepository.deleteById(id);
+    }
+
+    public List<Libro> listarLibros() {
+        return libroRepository.findAll();
+    }
+    
+    public Libro buscarLibroPorId(Long id) {
+        return libroRepository.findById(id).orElse(null); // Retorna null si no se encuentra el libro
+    }
+    
+    
+    public void actualizarLibro(Libro libro) {
+        libroRepository.save(libro); // Guarda el libro actualizado
+    }
+}
+

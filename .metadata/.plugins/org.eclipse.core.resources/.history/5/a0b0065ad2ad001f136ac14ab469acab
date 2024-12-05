@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Formulario de Libro</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 th:text="${#strings.isEmpty(libro.id) ? 'Agregar Libro' : 'Editar Libro'}"></h1>
+    <form th:action="@{/admin/libros}" th:object="${libro}" method="post">
+        <div class="mb-3">
+            <label for="titulo" class="form-label">Título</label>
+            <input type="text" class="form-control" id="titulo" th:field="*{titulo}" required>
+        </div>
+        <div class="mb-3">
+            <label for="autor" class="form-label">Autor</label>
+            <input type="text" class="form-control" id="autor" th:field="*{autor}" required>
+        </div>
+        <div class="mb-3">
+            <label for="stock" class="form-label">Stock</label>
+            <input type="number" class="form-control" id="stock" th:field="*{stock}" required>
+        </div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+    </form>
+</div>
+</body>
+</html>
+>

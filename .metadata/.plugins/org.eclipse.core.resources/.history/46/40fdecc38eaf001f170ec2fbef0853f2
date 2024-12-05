@@ -1,0 +1,86 @@
+package com.trilce.Bibloteca.controladores;
+
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.trilce.Bibloteca.Entidades.Libro;
+import com.trilce.Bibloteca.Entidades.Sancion;
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.repositorio.UsuarioRepository;
+import com.trilce.Bibloteca.servicios.LibroService;
+import com.trilce.Bibloteca.servicios.SancionService;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequestMapping("/lector")
+@RequiredArgsConstructor
+public class LectorController {
+
+    private final LibroService libroService;
+    private final SancionService sancionService;
+    private final UsuarioRepository usuarioRepository;
+
+    // Verificar si el usuario tiene sanción activa
+    private boolean verificarSancion(Usuario usuario, Model model) {
+        if (sancionService.tieneSancionActiva(usuario.getId())) {
+            Sancion sancion = sancionService.buscarSancionPorId(usuario.getId());
+            if (sancion != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                model.addAttribute("sancionMensaje", "No puedes realizar una reserva hasta el " +
+                        sancion.getFechaFin().format(formatter)); // Mostrar fecha de fin de la sanción
+            } else {
+                model.addAttribute("sancionMensaje", "Tienes una sanción activa.");
+            }
+            return true; // El usuario tiene sanción activa
+        }
+        return false; // El usuario no tiene sanción activa
+    }
+
+    @GetMapping("/catalogo")
+    public String listarCatalogo(Model model) {
+        List<Libro> libros = libroService.listarLibros();
+        model.addAttribute("libros", libros);
+
+        // Obtener usuario autenticado
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Usuario usuario = usuarioRepository.findByCorreo(user.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        // Verificar si el usuario tiene sanción
+        if (verificarSancion(usuario, model)) {
+            return "lector/catalogo"; // Si tiene sanción, redirige a catálogo con mensaje de sanción
+        }
+
+        return "lector/catalogo"; // Si no tiene sanción, puede ver el catálogo y reservar
+    }
+
+    // Reservar libro
+    @PostMapping("/reservar/{idLibro}")
+    public String reservarLibro(@PathVariable Long idLibro, Model model) {
+        // Obtener usuario autenticado
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Usuario usuario = usuarioRepository.findByCorreo(user.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        // Verificar sanción antes de permitir la reserva
+        if (verificarSancion(usuario, model)) {
+            return "lector/catalogo"; // Si está sancionado, no se puede reservar
+        }
+
+        // Lógica para reservar el libro
+        libroService.reservarLibro(idLibro, usuario.getId()); // Asumimos que `libroService.reservarLibro` maneja la reserva.
+        model.addAttribute("exitoMensaje", "Reserva realizada con éxito.");
+
+        return "redirect:/lector/catalogo"; // Redirigir a catálogo después de la reserva
+    }
+}

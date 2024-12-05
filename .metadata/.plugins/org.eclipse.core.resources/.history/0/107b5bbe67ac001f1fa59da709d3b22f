@@ -1,0 +1,77 @@
+package com.trilce.Bibloteca.servicios;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Cliente;
+import com.trilce.Bibloteca.repositorio.ClienteRepository;
+
+@Service
+public class ClienteService {
+    @Autowired
+    private ClienteRepository clienteRepository;
+
+    // Listar todos los lectores
+    public List<Cliente> listarLectores() {
+        return clienteRepository.findAll().stream()
+            .filter(cliente -> cliente.getRol() == Cliente.Rol.LECTOR)
+            .collect(Collectors.toList());
+    }
+
+    // Crear nuevo lector
+    public Cliente crearLector(Cliente cliente) {
+        // Validaciones
+        if (cliente.getDni() == null || cliente.getDni().isEmpty()) {
+            throw new IllegalArgumentException("El DNI es obligatorio");
+        }
+
+        // Verificar si ya existe un lector con ese DNI
+        if (clienteRepository.findByDni(cliente.getDni()).isPresent()) {
+            throw new IllegalArgumentException("Ya existe un lector con este DNI");
+        }
+
+        // Forzar rol de lector
+        cliente.setRol(Cliente.Rol.LECTOR);
+        return clienteRepository.save(cliente);
+    }
+
+    // Editar lector
+    public Cliente editarLector(Long id, Cliente datosActualizados) {
+        Cliente clienteExistente = clienteRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Lector no encontrado"));
+
+        // Actualizar campos
+        clienteExistente.setNombre(datosActualizados.getNombre());
+        clienteExistente.setApellidos(datosActualizados.getApellidos());
+        clienteExistente.setCorreo(datosActualizados.getCorreo());
+        clienteExistente.setUsuario(datosActualizados.getUsuario());
+        
+        // Solo actualizar contraseña si se proporciona
+        if (datosActualizados.getContraseña() != null && !datosActualizados.getContraseña().isEmpty()) {
+            clienteExistente.setContraseña(datosActualizados.getContraseña());
+        }
+
+        return clienteRepository.save(clienteExistente);
+    }
+
+    // Eliminar lector
+    public void eliminarLector(Long id) {
+        Cliente cliente = clienteRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Lector no encontrado"));
+        
+        if (cliente.getRol() != Cliente.Rol.LECTOR) {
+            throw new RuntimeException("Solo se pueden eliminar lectores");
+        }
+        
+        clienteRepository.deleteById(id);
+    }
+
+    // Buscar lector por DNI
+    public Cliente buscarPorDni(String dni) {
+        return clienteRepository.findByDni(dni)
+            .orElseThrow(() -> new RuntimeException("No se encontró lector con DNI: " + dni));
+    }
+}

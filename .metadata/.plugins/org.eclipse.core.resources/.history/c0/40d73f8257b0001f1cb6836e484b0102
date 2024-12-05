@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Libro</title>
+    <!-- CSS de SB Admin 2 -->
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+    <!-- Iconos -->
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+    <!-- Contenedor principal -->
+    <div id="wrapper">
+        <!-- Barra lateral -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <!-- Logotipo -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
+                <div class="sidebar-brand-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Biblioteca Trilce</div>
+            </a>
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+            <!-- Menú de navegación -->
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/libros">
+                    <i class="fas fa-book"></i>
+                    <span>Gestión de Libros</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/reservas">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Gestión de Reservas</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/reportedesanciones">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Reporte de Sanciones</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/prestamos">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Gestión de Préstamos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/sanciones">
+                    <i class="fas fa-ban"></i>
+                    <span>Gestión de Sanciones</span>
+                </a>
+            </li>
+            <hr class="sidebar-divider">
+        </ul>
+        <!-- Formulario -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <h1 class="h3 mb-0 text-gray-800">Agregar Libro</h1>
+                </nav>
+                <!-- Formulario de nuevo libro -->
+                <div class="container-fluid">
+                    <form action="/admin/libros" method="post" enctype="multipart/form-data">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Formulario de Libro</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="titulo">Título</label>
+                                    <input type="text" id="titulo" name="titulo" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="autor">Autor</label>
+                                    <input type="text" id="autor" name="autor" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="genero">Género</label>
+                                    <input type="text" id="genero" name="genero" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="isbn">ISBN</label>
+                                    <input type="text" id="isbn" name="isbn" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="fechaPublicacion">Fecha de Publicación</label>
+                                    <input type="date" id="fechaPublicacion" name="fechaPublicacion" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="stock">Stock</label>
+                                    <input type="number" id="stock" name="stock" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="imagen">Imagen del Libro</label>
+                                    <input type="file" id="imagen" name="imagen" class="form-control" accept="image/*">
+                                </div>
+                                <button type="submit" class="btn btn-success">Guardar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Admin</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Bienvenido, Administrador</h1>
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <a href="/admin/libros" class="btn btn-primary btn-block">Gestión de Libros</a>
+            </div>
+            <div class="col-md-4">
+                <a href="/admin/prestamos" class="btn btn-primary btn-block">Gestión de Préstamos</a>
+            </div>
+            <div class="col-md-4">
+                <a href="/admin/reservas" class="btn btn-primary btn-block">Gestión de Reservas</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

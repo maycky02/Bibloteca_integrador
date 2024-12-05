@@ -1,0 +1,11 @@
+package com.trilce.Bibloteca.servicios;
+
+import com.trilce.Bibloteca.Entidades.Sancion;
+
+public interface SancionServicio {
+    // Registrar una nueva sanción
+    Sancion registrarSancion(Long usuarioId);
+
+    // Verificar si un usuario tiene una sanción activa
+    boolean tieneSancionActiva(Long usuarioId);
+}

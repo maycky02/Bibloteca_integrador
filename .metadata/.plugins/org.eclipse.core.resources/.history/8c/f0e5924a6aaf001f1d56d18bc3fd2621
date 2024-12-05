@@ -1,0 +1,55 @@
+package com.trilce.Bibloteca.servicios;
+
+import com.trilce.Bibloteca.Entidades.Sancion;
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.repositorio.SancionRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class SancionService {
+
+    private final SancionRepository sancionRepository;
+
+    public void registrarSancion(String dniUsuario, String motivo, int diasDeSancion) {
+        Sancion sancion = new Sancion();
+        sancion.setDniUsuario(dniUsuario);
+        sancion.setMotivo(motivo);
+        sancion.setFechaInicio(LocalDate.now());
+        sancion.setFechaFin(LocalDate.now().plusDays(diasDeSancion));
+        sancionRepository.save(sancion);
+    }
+
+    public List<Sancion> listarSanciones() {
+        return sancionRepository.findAll();
+    }
+
+    public void eliminarSancion(Long id) {
+        sancionRepository.deleteById(id);
+    }
+
+    public boolean tieneSancionActiva(String dniUsuario) {
+        List<Sancion> sanciones = sancionRepository.findByDniUsuario(dniUsuario);
+        return sanciones.stream().anyMatch(s -> s.getFechaFin().isAfter(LocalDate.now()));  // Verifica si alguna sanción no ha expirado
+    }
+
+	public void aplicarSancion(Usuario usuario) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	 public Sancion obtenerSancionActiva(String dniUsuario) {
+	        // Obtenemos la fecha actual
+	        LocalDate fechaActual = LocalDate.now();
+	        // Llamamos al repositorio para obtener la sanción activa más reciente
+	        return sancionRepository.findTopByDniUsuarioAndFechaFinAfterOrderByFechaFinDesc(dniUsuario, fechaActual);
+	    }
+
+    public Sancion buscarSancionPorId(Long id) {
+        return sancionRepository.findById(id).orElseThrow(() -> new RuntimeException("Sanción no encontrada"));
+    }
+}

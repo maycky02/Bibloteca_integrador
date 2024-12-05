@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Libro</title>
+    <!-- CSS de SB Admin 2 -->
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+    <!-- Iconos -->
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+    <!-- Contenedor principal -->
+    <div id="wrapper">
+        <!-- Barra lateral -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <!-- Logotipo -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
+                <div class="sidebar-brand-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Biblioteca Trilce</div>
+            </a>
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+            <!-- Menú de navegación -->
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/libros">
+                    <i class="fas fa-book"></i>
+                    <span>Gestión de Libros</span>
+                </a>
+            </li>
+            <!-- Otros elementos del menú -->
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </a>
+            </li>
+            <hr class="sidebar-divider d-none d-md-block">
+        </ul>
+
+        <!-- Contenido principal -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <!-- Barra superior -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <h1 class="h3 mb-0 text-gray-800">Formulario de Libro</h1>
+                </nav>
+                <!-- Contenido -->
+                <div class="container-fluid">
+                    <form th:action="@{/admin/libros/guardar}" th:object="${libro}" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Título</label>
+                            <input type="text" class="form-control" id="titulo" th:field="*{titulo}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="autor" class="form-label">Autor</label>
+                            <input type="text" class="form-control" id="autor" th:field="*{autor}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editorial" class="form-label">Editorial</label> <!-- Cambio aquí -->
+                            <input type="text" class="form-control" id="editorial" th:field="*{editorial}" required> <!-- Cambio aquí -->
+                        </div>
+                        <div class="mb-3">
+                            <label for="isbn" class="form-label">ISBN</label>
+                            <input type="text" class="form-control" id="isbn" th:field="*{isbn}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fechaPublicacion" class="form-label">Fecha de Publicación</label>
+                            <input type="date" class="form-control" id="fechaPublicacion" th:field="*{fechaPublicacion}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="stock" class="form-label">Stock</label>
+                            <input type="number" class="form-control" id="stock" th:field="*{stock}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sinopsis" class="form-label">Sinopsis</label>
+                            <textarea class="form-control" id="sinopsis" th:field="*{sinopsis}" required></textarea>
+                        </div>
+
+                        <!-- Campo para cargar la imagen -->
+                        <div class="mb-3">
+                            <label for="imagenArchivo" class="form-label">Imagen</label>
+                            <input type="file" class="form-control" id="imagenArchivo" name="imagenArchivo">
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                        <a href="/admin/libros" class="btn btn-secondary">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+            <!-- Pie de página -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>&copy; 2024 Biblioteca Trilce. Todos los derechos reservados.</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts de SB Admin 2 -->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="/js/sb-admin-2.min.js"></script>
+</body>
+</html>

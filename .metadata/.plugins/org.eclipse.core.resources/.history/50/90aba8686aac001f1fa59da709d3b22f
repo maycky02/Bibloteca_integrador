@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes</title>
+    <!-- Estilos de la plantilla SB Admin 2 -->
+    <link rel="stylesheet" href="/css/sb-admin-2.min.css">
+    <link rel="stylesheet" href="/vendor/fontawesome-free/css/all.min.css">
+</head>
+<body id="page-top">
+    <!-- Contenedor principal -->
+    <div id="wrapper">
+        <!-- Sidebar (sin cambios) -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <!-- [Contenido del sidebar existente] -->
+        </ul>
+        <!-- Fin Sidebar -->
+
+        <!-- Contenido Principal -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <!-- Barra de Navegación -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <h1 class="h3 mb-0 text-gray-800">Gestión de Clientes</h1>
+                </nav>
+
+                <!-- Contenido de la Página -->
+                <div class="container-fluid">
+                    <!-- Formulario de búsqueda MEJORADO -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <!-- Búsqueda general -->
+                            <form method="get" action="/admin/clientes" class="mb-3">
+                                <div class="input-group">
+                                    <input type="text" name="filtro" placeholder="Buscar por DNI, nombre o correo" 
+                                           class="form-control" th:value="${param.filtro != null ? param.filtro[0] : ''}"/>
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-search"></i> Buscar
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Búsqueda específica por DNI -->
+                            <form method="get" action="/admin/clientes/buscar-por-dni" class="mb-3">
+                                <div class="input-group">
+                                    <input type="text" name="dni" placeholder="Buscar por DNI específico" 
+                                           class="form-control" required/>
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fas fa-id-card"></i> Buscar por DNI
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Formulario de creación de nuevo cliente -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Crear Nuevo Cliente</h6>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" action="/admin/clientes" th:object="${cliente}">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="dni">DNI</label>
+                                            <input type="text" id="dni" name="dni" class="form-control" 
+                                                   pattern="\d{8}" title="DNI debe tener 8 dígitos" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="nombre">Nombre</label>
+                                            <input type="text" id="nombre" name="nombre" class="form-control" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="apellido">Apellido</label>
+                                            <input type="text" id="apellido" name="apellido" class="form-control" required />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="correo">Correo</label>
+                                            <input type="email" id="correo" name="correo" class="form-control" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="rol">Rol</label>
+                                            <select id="rol" name="rol" class="form-control">
+                                                <option value="LECTOR">Lector</option>
+                                                <option value="ADMIN">Administrador</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-success mt-2">
+                                    <i class="fas fa-plus"></i> Crear Cliente
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Listado de Clientes -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Listado de Clientes</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>DNI</th>
+                                            <th>Nombre</th>
+                                            <th>Apellido</th>
+                                            <th>Correo</th>
+                                            <th>Rol</th>
+                                            <th>Sanción</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="cliente : ${clientes}">
+                                            <td th:text="${cliente.dni}"></td>
+                                            <td th:text="${cliente.nombre}"></td>
+                                            <td th:text="${cliente.apellido}"></td>
+                                            <td th:text="${cliente.correo}"></td>
+                                            <td th:text="${cliente.rol}"></td>
+                                            <td th:text="${cliente.tieneSancion ? 'Sí' : 'No'}"></td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <!-- Botón Editar con modal de actualización -->
+                                                    <button type="button" class="btn btn-sm btn-warning" 
+                                                            data-toggle="modal" 
+                                                            th:data-target="${'#editarClienteModal' + cliente.id}">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+
+                                                    <!-- Botón Eliminar con confirmación -->
+                                                    <a th:href="@{/admin/clientes/eliminar/{id}(id=${cliente.id})}" 
+                                                       class="btn btn-sm btn-danger" 
+                                                       onclick="return confirm('¿Está seguro de eliminar este cliente?')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+
+                                                    <!-- Botones de Sanción -->
+                                                    <a th:href="@{/admin/clientes/sancionar/{id}(id=${cliente.id})}" 
+                                                       th:if="${!cliente.tieneSancion}" 
+                                                       class="btn btn-sm btn-dark">
+                                                        <i class="fas fa-ban"></i>
+                                                    </a>
+                                                    <a th:href="@{/admin/clientes/levantar-sancion/{id}(id=${cliente.id})}" 
+                                                       th:if="${cliente.tieneSancion}" 
+                                                       class="btn btn-sm btn-success">
+                                                        <i class="fas fa-check-circle"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modales de Edición (agregar un modal para cada cliente) -->
+    <div th:each="cliente : ${clientes}" 
+         th:id="${'editarClienteModal' + cliente.id}" 
+         class="modal fade" 
+         tabindex="-1" 
+         role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Cliente</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form th:action="@{/admin/clientes/actualizar/{id}(id=${cliente.id})}" method="post">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>DNI</label>
+                            <input type="text" name="dni" class="form-control" 
+                                   th:value="${cliente.dni}" 
+                                   pattern="\d{8}" 
+                                   title="DNI debe tener 8 dígitos" 
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" name="nombre" class="form-control" 
+                                   th:value="${cliente.nombre}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Apellido</label>
+                            <input type="text" name="apellido" class="form-control" 
+                                   th:value="${cliente.apellido}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Correo</label>
+                            <input type="email" name="correo" class="form-control" 
+                                   th:value="${cliente.correo}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Rol</label>
+                            <select name="rol" class="form-control">
+                                <option th:value="LECTOR" th:selected="${cliente.rol == 'LECTOR'}">Lector</option>
+                                <option th:value="ADMIN" th:selected="${cliente.rol == 'ADMIN'}">Administrador</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de dependencias -->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sb-admin-2.min.js"></script>
+</body>
+</html>

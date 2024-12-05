@@ -1,0 +1,27 @@
+package com.trilce.Bibloteca.servicios;
+
+import java.util.Optional;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Lector;
+import com.trilce.Bibloteca.repositorio.UsuarioRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class LectorService {
+    private final UsuarioRepository lectorRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public Lector registrarLector(Lector lector) {
+        lector.setContraseña(passwordEncoder.encode(lector.getContraseña()));
+        return lectorRepository.save(lector);
+    }
+
+    public Optional<Lector> buscarPorCorreo(String correo) {
+        return lectorRepository.findByCorreo(correo);
+    }
+}

@@ -1,0 +1,105 @@
+package com.trilce.Bibloteca.servicios;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Prestamo;
+import com.trilce.Bibloteca.Entidades.Reserva;
+import com.trilce.Bibloteca.repositorio.LibroRepository;
+import com.trilce.Bibloteca.repositorio.PrestamoRepository;
+import com.trilce.Bibloteca.repositorio.ReservaRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class PrestamoService {
+
+    private final PrestamoRepository prestamoRepository;
+    private final LibroRepository libroRepository;  // Repositorio de libros
+    private final SancionService sancionService;    // Servicio de sanciones
+    private final ReservaRepository reservaRepository;    // Servicio de sanciones
+
+ 
+
+    public void devolverPrestamo(Long prestamoId) {
+        // Buscar el préstamo en la base de datos
+        Prestamo prestamo = prestamoRepository.findById(prestamoId)
+            .orElseThrow(() -> new IllegalArgumentException("Préstamo no encontrado"));
+
+        // Verificar si el préstamo está activo
+        if (!"Activo".equals(prestamo.getEstado())) {
+            throw new IllegalStateException("El préstamo ya ha sido devuelto o no está activo.");
+        }
+
+        // Cambiar el estado del préstamo a "Devuelto"
+        prestamo.setEstado("Devuelto");
+        prestamoRepository.save(prestamo);
+
+        // Incrementar el stock del libro asociado al préstamo
+        prestamo.getLibro().setStock(prestamo.getLibro().getStock() + 1);
+        libroRepository.save(prestamo.getLibro());
+    }
+  
+    // Listar todos los préstamos
+    public List<Prestamo> listarTodos() {
+        return prestamoRepository.findAll();  // Devuelve todos los préstamos registrados
+    }
+
+    public List<Prestamo> listarPrestamosVencidos() {
+        // Filtrar los préstamos vencidos (estado no "Devuelto" y fechaDevolucion pasada)
+        return prestamoRepository.findAll().stream()
+            .filter(prestamo -> prestamo.getFechaDevolucion().isBefore(LocalDate.now()) && !"Devuelto".equals(prestamo.getEstado()))
+            .collect(Collectors.toList());
+    }
+
+
+    // Registrar un préstamo
+    public void registrarPrestamo(Prestamo prestamo) {
+        String dniUsuario = prestamo.getUsuario().getDni();
+        
+        // Verificar si el usuario tiene una sanción activa
+        if (sancionService.tieneSancionActiva(dniUsuario)) {
+            throw new IllegalStateException("No puede realizar préstamos. Usted está sancionado.");
+        }
+
+        // Guardar el préstamo en la base de datos
+        prestamoRepository.save(prestamo);
+    }
+
+    // Actualizar un préstamo existente
+    public Prestamo actualizarPrestamo(Prestamo prestamo) {
+        // Guardar y devolver el préstamo actualizado
+        return prestamoRepository.save(prestamo);
+    }
+    
+    // Método para buscar un préstamo por ID
+    public Optional<Prestamo> buscarPrestamoPorId(Long id) {
+        return prestamoRepository.findById(id);
+    }
+    // Method to list all loans
+    public List<Prestamo> listarPrestamos() {
+        return prestamoRepository.findAll();  // Retrieve all loans from the repository
+    }
+    public void crearPrestamoDesdeReserva(Long reservaId) {
+        // Obtener la reserva aprobada
+        Reserva reserva = reservaRepository.findById(reservaId)
+            .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada"));
+
+        // Crear un nuevo préstamo basado en la reserva
+        Prestamo prestamo = new Prestamo();
+        prestamo.setLibro(reserva.getLibro());
+        prestamo.setUsuario(reserva.getUsuario());
+        prestamo.setFechaPrestamo(LocalDate.now());
+        prestamo.setFechaDevolucion(LocalDate.now().plusWeeks(1));  // Prestamo por una semana
+        prestamo.setEstado("Activo");
+
+        // Guardar el préstamo en la base de datos
+        prestamoRepository.save(prestamo);
+    }
+
+}

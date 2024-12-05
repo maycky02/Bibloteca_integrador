@@ -1,0 +1,26 @@
+package com.trilce.Bibloteca.controladores;
+
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class InicioSesionController {
+
+    @GetMapping("/redirect")
+    public String redirigirSegunRol(Authentication authentication) {
+        // Obtener el rol del usuario autenticado
+        String rol = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority) // Obtener la autoridad
+                .findFirst() // Tomar la primera autoridad
+                .orElse(""); // Por defecto vacío si no hay autoridad
+
+        // Redirigir según el rol
+        if (rol.equals("ROLE_ADMIN")) {
+            return "redirect:/admin/libros";
+        } else if (rol.equals("ROLE_LECTOR")) {
+            return "redirect:/lector/index";
+        }
+        return "redirect:/login";
+    }
+}

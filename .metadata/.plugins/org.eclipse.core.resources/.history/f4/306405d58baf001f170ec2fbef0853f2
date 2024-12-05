@@ -1,0 +1,49 @@
+package com.trilce.Bibloteca.servicios;
+
+import com.trilce.Bibloteca.Entidades.Sancion;
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.repositorio.SancionRepository;
+import com.trilce.Bibloteca.repositorio.UsuarioRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class SancionService {
+
+    private final SancionRepository sancionRepository;
+    private final UsuarioRepository usuarioRepository;
+
+    public void registrarSancion(Long usuarioId, String motivo, int diasDeSancion) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        Sancion sancion = new Sancion();
+        sancion.setUsuario(usuario);
+        sancion.setMotivo(motivo);
+        sancion.setFechaInicio(LocalDate.now());
+        sancion.setFechaFin(LocalDate.now().plusDays(diasDeSancion));
+        sancionRepository.save(sancion);
+    }
+
+    public List<Sancion> listarSanciones() {
+        return sancionRepository.findAll();
+    }
+
+    public void eliminarSancion(Long id) {
+        sancionRepository.deleteById(id);
+    }
+
+    public boolean tieneSancionActiva(Long usuarioId) {
+        return sancionRepository.findByUsuarioId(usuarioId).stream()
+                .anyMatch(s -> s.getFechaFin().isAfter(LocalDate.now()));
+    }
+
+    public Sancion buscarSancionPorId(Long sancionId) {
+        return sancionRepository.findById(sancionId)
+                .orElse(null);
+    }
+}

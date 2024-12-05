@@ -1,0 +1,9 @@
+package com.trilce.Bibloteca.repositorio;
+
+import com.trilce.Bibloteca.Entidades.Sancion;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface SancionRepository extends JpaRepository<Sancion, Long> {
+    List<Sancion> findByUsuarioId(Long usuarioId);
+}

@@ -1,0 +1,54 @@
+package com.trilce.Bibloteca.controladores;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.trilce.Bibloteca.Entidades.Historial;
+import com.trilce.Bibloteca.Entidades.Prestamo;
+import com.trilce.Bibloteca.Entidades.Reserva;
+import com.trilce.Bibloteca.servicios.PrestamoService;
+import com.trilce.Bibloteca.servicios.ReservaService;
+
+
+@Controller
+@RequestMapping("/lector")
+public class HistorialController {
+
+    @Autowired
+    private ReservaService reservaService;
+
+    @Autowired
+    private PrestamoService prestamoService;
+
+    // Asegúrate de tener un servicio para obtener el usuario
+
+    @PostMapping("/reservar")
+    public String reservarLibro(@RequestParam("libroId") Long libroId, @RequestParam("usuarioId") Long usuarioId) {
+        // Obtener el libro y el usuario desde la base de datos
+        Libro libro = libroService.findById(libroId);
+        Usuario usuario = usuarioService.findById(usuarioId);
+        
+        // Crear o obtener el historial del usuario
+        Historial historial = historialService.findByUsuario(usuario);
+        if (historial == null) {
+            historial = new Historial();
+            historial.setUsuario(usuario);
+            historialService.save(historial);  // Guardar el historial si no existe
+        }
+        
+        // Crear la reserva y asociarla al historial
+        Reserva reserva = new Reserva();
+        reserva.setLibro(libro);
+        reserva.setEstado("Pendiente");
+        reserva.setHistorial(historial);
+        
+        // Guardar la reserva
+        reservaService.save(reserva);
+
+        return "redirect:/lector/historial";
+    }

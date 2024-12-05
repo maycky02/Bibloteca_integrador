@@ -1,0 +1,5 @@
+package com.trilce.Bibloteca.servicio.impl;
+
+public class PrestamoServicioImpl {
+
+}

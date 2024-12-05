@@ -1,0 +1,50 @@
+package com.trilce.Bibloteca.controladores;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.trilce.Bibloteca.Entidades.Reserva;
+import com.trilce.Bibloteca.servicios.ReservaService;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequestMapping("/admin/reservas")
+@RequiredArgsConstructor
+public class ReservaController {
+
+    private final ReservaService reservaService;
+    
+    
+	 /// Para mostrar las reservas en la vista (usando Thymeleaf)
+    @GetMapping
+    public String listarReservas(Model model) {
+        List<Reserva> reservas = reservaService.listarReservas();  // Obtener las reservas desde el servicio
+        model.addAttribute("reservas", reservas);  // Agregar las reservas al modelo
+        return "admin/reservas";  // Nombre de la plantilla para la vista
+    }
+
+
+
+    // Para las acciones de la API (aprobación/rechazo de reservas)
+    @PostMapping("/{id}/aprobar")
+    public ResponseEntity<String> aprobarReserva(@PathVariable Long id) {
+        reservaService.aprobarReserva(id);
+        return ResponseEntity.ok("Reserva aprobada.");
+    }
+
+    @PostMapping("/{id}/rechazar")
+    public ResponseEntity<String> rechazarReserva(@PathVariable Long id) {
+        reservaService.rechazarReserva(id);
+        return ResponseEntity.ok("Reserva rechazada.");
+    }
+
+    
+}

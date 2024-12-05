@@ -1,0 +1,67 @@
+package com.trilce.Bibloteca.controladores;
+
+import java.time.LocalDate;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.trilce.Bibloteca.Entidades.Sancion;
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.servicios.SancionService;
+import com.trilce.Bibloteca.servicios.UsuarioService;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequiredArgsConstructor
+public class SancionController {
+
+    private final UsuarioService usuarioService;
+    private final SancionService sancionService;
+
+    // Buscar usuario por DNI
+    @GetMapping("/buscar-usuario-sancion")
+    public String buscarUsuarioPorDni(@RequestParam String dni, Model model) {
+        // Buscar usuario por DNI
+        try {
+            Usuario usuario = usuarioService.buscarPorDni(dni);
+            model.addAttribute("usuario", usuario);
+            return "sanciones"; // Redirigir a la vista de sanciones
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            return "buscar_usuario"; // Volver a la vista de búsqueda si no se encuentra el usuario
+        }
+    }
+
+    // Registrar la sanción
+    @PostMapping("/sancionar-usuario")
+    public String sancionarUsuario(@RequestParam Long usuarioId,
+                                   @RequestParam String motivo,
+                                   @RequestParam int diasSancion,
+                                   Model model) {
+
+        try {
+            // Buscar al usuario por ID
+            Usuario usuario = usuarioService.obtenerUsuarioPorId(usuarioId);
+
+            // Calcular la fecha de fin de la sanción
+            LocalDate fechaFin = LocalDate.now().plusDays(diasSancion);
+
+            // Crear y guardar la sanción
+            Sancion sancion = new Sancion();
+            sancion.setUsuario(usuario);
+            sancion.setMotivo(motivo);
+            sancion.setFechaFin(fechaFin);
+            sancionService.registrarSancion(sancion);
+
+            model.addAttribute("mensaje", "Sanción registrada correctamente para el usuario " + usuario.getNombre());
+            return "sancion_registrada";  // Vista de confirmación de sanción registrada
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            return "sanciones";  // Volver a la página de sanciones en caso de error
+        }
+    }
+}

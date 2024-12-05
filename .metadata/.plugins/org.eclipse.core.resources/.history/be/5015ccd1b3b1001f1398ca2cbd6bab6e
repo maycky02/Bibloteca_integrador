@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Libros</title>
+    <!-- Usar la versión más reciente de Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.4.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Fondo con imagen */
+        body {
+            background-image: url('/img/Fondo_bibloteca.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            font-family: 'Arial', sans-serif;
+            padding-bottom: 60px;
+        }
+
+        /* Barra de navegación */
+        .navbar {
+            background-color: rgba(244, 162, 97, 0.9);
+            border-bottom: 2px solid #e76f51;
+        }
+
+        .navbar a {
+            color: #ffffff !important;
+            font-weight: bold;
+        }
+
+        .navbar a:hover {
+            color: #e76f51;
+            text-decoration: underline;
+        }
+
+        /* Título */
+        h1 {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Estilo de las tarjetas */
+        .card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-img-top {
+            object-fit: cover;
+            height: 200px;
+        }
+
+        .card-title {
+            color: #e76f51;
+            font-weight: bold;
+        }
+
+        /* Controles del carrusel */
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: #e76f51;
+            border-radius: 50%;
+        }
+
+        /* Pie de página */
+        footer {
+            background-color: rgba(244, 162, 97, 0.9);
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            border-top: 3px solid #e76f51;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        footer a {
+            color: #ffffff;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Biblioteca Trilce</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/lector/perfil">Mi Perfil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/lector/historial">Historial de Préstamos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Cerrar Sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenedor principal -->
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Catálogo de Libros</h1>
+
+        <!-- Carrusel de libros -->
+        <div id="librosCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <!-- Grupo 1 -->
+                <div class="carousel-item active">
+                    <div class="row justify-content-center">
+                        <div class="col-md-3">
+                            <div class="card">
+                                <img th:src="@{/img_libros/{imagen}(imagen=${libro.imagen})}" class="card-img-top" alt="Portada del libro">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title" th:text="${libro.titulo}">Título del Libro</h5>
+                                    <p class="card-text" th:text="'Autor: ' + ${libro.autor}">Autor</p>
+                                    <p class="card-text" th:text="'Stock: ' + ${libro.stock}">Stock</p>
+                                    <a th:href="@{/lector/reservar/{id}(id=${libro.id})}" class="btn btn-primary w-100"
+                                       th:disabled="${sancionMensaje != null}">Reservar</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Más tarjetas aquí -->
+                    </div>
+                </div>
+
+                <!-- Grupo 2 -->
+                <div class="carousel-item">
+                    <div class="row justify-content-center">
+                        <!-- Repetir tarjetas para este grupo -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controles del carrusel -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#librosCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#librosCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Siguiente</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Pie de página -->
+    <footer>
+        <p>&copy; 2024 Biblioteca Trilce. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- Scripts de Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.4.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

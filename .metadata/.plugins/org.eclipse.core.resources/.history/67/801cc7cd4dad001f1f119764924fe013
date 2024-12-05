@@ -1,0 +1,5 @@
+package com.trilce.Bibloteca.Entidades;
+
+public class Administrador {
+
+}

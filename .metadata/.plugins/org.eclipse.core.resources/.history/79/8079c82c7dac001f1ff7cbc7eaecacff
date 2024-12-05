@@ -1,0 +1,24 @@
+package com.trilce.Bibloteca.controladores;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class MainController {
+
+    @GetMapping("/login")
+    public String login() {
+        return "login"; // Vista para el login
+    }
+
+    @GetMapping("/default")
+    public String defaultAfterLogin() {
+        // Redirigir según el rol
+        return "redirect:/" + (getRole().equals("ROLE_ADMIN") ? "admin" : "cliente");
+    }
+
+    private String getRole() {
+        return org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .getAuthentication().getAuthorities().iterator().next().getAuthority();
+    }
+}

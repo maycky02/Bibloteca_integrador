@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Gestión de Libros</title>
+</head>
+<body>
+    <h1>Gestión de Libros</h1>
+    <form th:action="@{/admin/libros}" method="post">
+        <input type="text" name="titulo" placeholder="Título" required />
+        <input type="text" name="autor" placeholder="Autor" required />
+        <input type="number" name="stock" placeholder="Stock" min="0" required />
+        <input type="text" name="isbn" placeholder="ISBN" required />
+        <button type="submit">Agregar Libro</button>
+    </form>
+    <h2>Lista de Libros</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>Stock</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="libro : ${libros}">
+                <td th:text="${libro.titulo}"></td>
+                <td th:text="${libro.autor}"></td>
+                <td th:text="${libro.stock}"></td>
+                <td>
+                    <form th:action="@{/admin/libros/{id}(id=${libro.id})}" method="post" th:method="delete">
+                        <button type="submit">Eliminar</button>
+                    </form>
+                    <a th:href="@{/admin/libros/editar/{id}(id=${libro.id})}">Editar</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

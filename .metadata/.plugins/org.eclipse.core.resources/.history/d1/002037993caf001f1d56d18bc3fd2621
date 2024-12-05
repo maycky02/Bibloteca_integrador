@@ -1,0 +1,34 @@
+package com.trilce.Bibloteca.controladores;
+
+import com.trilce.Bibloteca.Entidades.Sancion;
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.repositorio.UsuarioRepository;
+import com.trilce.Bibloteca.servicios.SancionService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+@RequestMapping("/admin/sanciones")
+@RequiredArgsConstructor
+public class SancionController {
+
+    private final SancionService sancionService;
+    private final UsuarioRepository usuarioRepository;
+
+    @GetMapping
+    public String listarSanciones(Model model) {
+        model.addAttribute("sanciones", sancionService.listarSanciones());
+        return "admin/sanciones";
+    }
+
+    @PostMapping("/nueva")
+    public String registrarSancion(@RequestParam String dni, @RequestParam String motivo, @RequestParam int dias) {
+        Usuario usuario = usuarioRepository.findByDni(dni)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        sancionService.crearSancion(usuario, motivo, dias);
+        return "redirect:/admin/sanciones";
+    }
+}

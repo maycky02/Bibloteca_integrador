@@ -1,0 +1,13 @@
+package com.trilce.Bibloteca.repositorio;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.trilce.Bibloteca.Entidades.Cliente;
+@Repository
+public interface ClienteRepository extends JpaRepository<Cliente, Long> {
+    List<Cliente> findByNombreContainingOrCorreoContaining(String nombre, String correo);
+    List<Cliente> findByRol(Cliente.Rol rol);
+}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Sanciones</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Biblioteca Trilce</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/libros">Gestión de Libros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/reservas">Gestión de Reservas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/usuarios">Gestión de Usuarios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/prestamos">Gestión de Préstamos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/sanciones">Gestión de Sanciones</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Cerrar Sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1>Gestión de Sanciones</h1>
+        <p>A continuación se muestra la lista de usuarios con sanciones activas.</p>
+
+        <!-- Tabla de sanciones -->
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                Usuarios con Sanciones
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID Usuario</th>
+                            <th>Nombre</th>
+                            <th>Sanción</th>
+                            <th>Fecha de Inicio</th>
+                            <th>Fecha de Fin</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Iteración sobre las sanciones -->
+                        <tr th:each="sancion : ${sanciones}">
+                            <td th:text="${sancion.usuario.id}"></td>
+                            <td th:text="${sancion.usuario.nombre}"></td>
+                            <td th:text="${sancion.tipo}"></td>
+                            <td th:text="${#dates.format(sancion.fechaInicio, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${#dates.format(sancion.fechaFin, 'dd/MM/yyyy')}"></td>
+                            <td>
+                                <!-- Botón para eliminar la sanción -->
+                                <form th:action="@{'/admin/sanciones/eliminar'}" method="post">
+                                    <input type="hidden" th:value="${sancion.id}" name="sancionId" />
+                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar Sanción</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <!-- Mostrar mensaje si no hay sanciones -->
+                        <tr th:if="${sanciones.empty}">
+                            <td colspan="6" class="text-center">No hay sanciones activas.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <p>&copy; 2024 Biblioteca Trilce. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

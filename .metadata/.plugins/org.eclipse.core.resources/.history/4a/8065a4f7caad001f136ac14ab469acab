@@ -1,0 +1,25 @@
+package com.trilce.Bibloteca.controladores;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.servicios.UsuarioService;
+
+@RestController
+@RequestMapping("/usuarios")
+public class UsuarioController {
+
+    @Autowired
+    private UsuarioService usuarioService;
+
+    @PostMapping("/registro")
+    public ResponseEntity<String> registrarUsuario(@RequestBody Usuario usuario) {
+        String resultado = usuarioService.registrarUsuario(usuario);
+        if (resultado.equals("Registro exitoso.")) {
+            return ResponseEntity.ok(resultado);
+        } else {
+            return ResponseEntity.badRequest().body(resultado);
+        }
+    }
+}

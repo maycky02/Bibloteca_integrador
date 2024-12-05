@@ -1,0 +1,36 @@
+package com.trilce.Bibloteca.controladores;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import com.trilce.Bibloteca.Entidades.Lector;
+import com.trilce.Bibloteca.servicios.UsuarioService;
+
+@Controller
+public class RegistroController {
+
+    private final UsuarioService usuarioService;
+
+    public RegistroController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
+
+    @GetMapping("/registro")
+    public String mostrarFormularioRegistro(Model model) {
+        model.addAttribute("usuario", new Lector());
+        return "registro";
+    }
+
+    @PostMapping("/registro")
+    public String registrarUsuario(Lector usuario, Model model) {
+        try {
+            usuarioService.registrarUsuario(usuario);
+            return "redirect:/login?registroExitoso";
+        } catch (Exception e) {
+            model.addAttribute("error", "El nombre de usuario ya existe.");
+            return "registro";
+        }
+    }
+}

@@ -1,0 +1,71 @@
+package com.trilce.Bibloteca.servicios;
+
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Usuario;
+
+@Service
+public class UsuarioService {
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    /**
+     * Registrar un lector en el sistema con validación de correo y DNI único.
+     *
+     * @param lector Datos del lector a registrar
+     * @return Lector registrado
+     * @throws IllegalArgumentException Si el correo no es institucional o el DNI ya existe
+     */
+    public Usuario registrarLector(Usuario lector) {
+        validarCorreoInstitucional(lector.getEmail());
+        validarDniUnico(lector.getDni());
+
+        lector.setPassword(passwordEncoder.encode(lector.getPassword()));
+        lector.setRoles(Set.of("LECTOR"));
+        lector.setActivo(true);
+
+        return usuarioRepository.save(lector);
+    }
+
+    /**
+     * Verifica que el correo sea institucional.
+     *
+     * @param email Correo a validar
+     * @throws IllegalArgumentException Si el correo no tiene el dominio @trilce.edu
+     */
+    private void validarCorreoInstitucional(String email) {
+        if (!email.endsWith("@trilce.edu")) {
+            throw new IllegalArgumentException("El correo debe ser institucional (@trilce.edu)");
+        }
+    }
+
+    /**
+     * Verifica que el DNI sea único en el sistema.
+     *
+     * @param dni DNI a validar
+     * @throws IllegalArgumentException Si el DNI ya está registrado
+     */
+    private void validarDniUnico(String dni) {
+        if (usuarioRepository.existsByDni(dni)) {
+            throw new IllegalArgumentException("El DNI ya está registrado");
+        }
+    }
+}
+
+@Repository
+public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+
+    boolean existsByDni(String dni);
+
+    boolean existsByEmail(String email);
+}

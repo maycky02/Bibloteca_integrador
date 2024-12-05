@@ -1,0 +1,30 @@
+package com.trilce.Bibloteca.Entidades;
+
+
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+@Data
+@Entity
+public class Cliente {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String dni;
+    private String nombre;
+    private String apellidos;
+    private String correo;
+    private String usuario;
+    private String contraseña;
+
+    @Enumerated(EnumType.STRING)
+    private Rol rol = Rol.LECTOR; // Por defecto será LECTOR
+
+    public enum Rol {
+        ADMINISTRADOR,
+        BIBLIOTECARIO,
+        LECTOR
+    }
+}

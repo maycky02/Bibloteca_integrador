@@ -1,0 +1,77 @@
+package com.trilce.Bibloteca.controladores;
+
+import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.trilce.Bibloteca.Entidades.Reserva;
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.servicios.ReservaService;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequestMapping("/admin/reservas")
+@RequiredArgsConstructor
+public class ReservaController {
+
+    private final ReservaService reservaService;
+
+    @GetMapping
+    public String listarReservas(@RequestParam(required = false) String dni, Model model) {
+        List<Reserva> reservas = reservaService.listarReservas();
+
+        if (dni != null && !dni.isEmpty()) {
+            reservas = reservas.stream()
+                .filter(reserva -> reserva.getUsuario() != null && reserva.getUsuario().getDni().equals(dni))
+                .collect(Collectors.toList());
+            model.addAttribute("dni", dni);  // Agregar el DNI al modelo para prellenar el filtro
+        }
+
+        model.addAttribute("reservas", reservas);
+        return "admin/reservas"; // Nombre de la vista
+    }
+
+    @PostMapping("/{id}/aprobar")
+    public String aprobarReserva(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        reservaService.aprobarReserva(id);
+        reservaService.crearPrestamoDesdeReserva(id);
+
+        redirectAttributes.addFlashAttribute("success", "Reserva aprobada y préstamo creado.");
+        return "redirect:/admin/prestamos"; // Redirigir a la lista de préstamos
+    }
+
+    @PostMapping("/{id}/rechazar")
+    public String rechazarReserva(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        reservaService.rechazarReserva(id);
+        
+        redirectAttributes.addFlashAttribute("success", "Reserva rechazada y stock actualizado.");
+        return "redirect:/admin/reservas"; // Redirigir a la vista de reservas
+    }
+    @PostMapping("/reservar")
+    public String reservarLibro(@RequestParam Long libroId, Model model, Principal principal) {
+        // Obtener el usuario actualmente autenticado
+        String email = principal.getName(); // Suponiendo que el correo es el identificador
+        Usuario usuario = usuarioService.findByEmail(email); // Implementar este método
+        
+        String mensaje = reservaService.reservarLibro(usuario.getId(), libroId);
+
+        // Agregar mensaje al modelo
+        model.addAttribute("mensaje", mensaje);
+
+        // Redirigir al catálogo
+        return "redirect:/lector/catalogo";
+    }
+    }
+
+
+}

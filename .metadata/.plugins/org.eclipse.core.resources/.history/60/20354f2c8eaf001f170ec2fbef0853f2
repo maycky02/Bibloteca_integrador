@@ -1,0 +1,88 @@
+package com.trilce.Bibloteca.controladores;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.trilce.Bibloteca.Entidades.Sancion;
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.servicios.SancionService;
+import com.trilce.Bibloteca.repositorio.UsuarioRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequestMapping("/admin/sanciones")
+@RequiredArgsConstructor
+public class SancionController {
+
+    private final SancionService sancionService;
+    private final UsuarioRepository usuarioRepository;
+
+    @GetMapping
+    public String listarSanciones(Model model) {
+        List<Sancion> sancionesActivas = sancionService.listarSancionesActivas();
+        model.addAttribute("sancionesActivas", sancionesActivas);
+        return "admin/sanciones";  // Vista con la tabla de sanciones activas
+    }
+
+    @PostMapping("/{id}/eliminar")
+    public String eliminarSancion(@PathVariable Long id) {
+        sancionService.eliminarSancion(id);
+        return "redirect:/admin/sanciones"; // Redirige de vuelta a la lista de sanciones
+    }
+
+    // Método para registrar una sanción
+    @PostMapping("/registrar")
+    public String registrarSancion(@RequestParam String dniUsuario,
+                                    @RequestParam String motivo,
+                                    @RequestParam int diasDeSancion,
+                                    Model model) {
+        // Busca al usuario por DNI
+        Usuario usuario = usuarioRepository.findByDni(dniUsuario)
+                .orElse(null);
+
+        if (usuario == null) {
+            // Si no se encuentra el usuario, muestra un error en la vista
+            model.addAttribute("error", "Usuario con DNI " + dniUsuario + " no encontrado.");
+            return listarSanciones(model); // Recarga la lista de sanciones con el mensaje de error
+        }
+
+        // Registra la sanción
+        sancionService.registrarSancion(usuario.getId(), motivo, diasDeSancion);
+        return "redirect:/admin/sanciones"; // Redirige de vuelta a la lista de sanciones
+    }
+
+
+    @GetMapping("/confirmarEliminar/{id}")
+    public String confirmarEliminarSancion(@PathVariable Long id, Model model) {
+        Sancion sancion = sancionService.buscarSancionPorId(id);
+        if (sancion == null) {
+            model.addAttribute("error", "La sanción no existe.");
+            return "admin/sanciones"; // Vuelve a la vista principal si la sanción no existe
+        }
+        model.addAttribute("sancion", sancion);
+        return "admin/confirmarEliminar"; // Vista para confirmar la eliminación
+    }
+
+    @GetMapping("/{id}")
+    public String obtenerSancion(@PathVariable Long id, Model model) {
+        Sancion sancion = sancionService.buscarSancionPorId(id);
+        if (sancion == null) {
+            model.addAttribute("error", "La sanción no existe.");
+            return "admin/sanciones"; // Redirige a la lista si no se encuentra la sanción
+        }
+        model.addAttribute("sancion", sancion);
+        return "admin/detalleSancion"; // Vista para mostrar los detalles de la sanción
+    }
+    
+    
+    
+    
+}

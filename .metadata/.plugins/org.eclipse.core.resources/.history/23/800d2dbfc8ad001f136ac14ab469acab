@@ -1,0 +1,21 @@
+@Entity
+@Data
+public class Usuario {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String correo;
+
+    private String dni;
+
+    private String contraseña;
+
+    @Enumerated(EnumType.STRING)
+    private Rol rol;
+
+    public enum Rol {
+        ADMINISTRADOR, LECTOR
+    }
+}

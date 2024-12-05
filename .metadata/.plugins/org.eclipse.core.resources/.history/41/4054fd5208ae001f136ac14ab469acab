@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Reservas</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Gestión de Reservas</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Libro</th>
+                    <th>Fecha Reserva</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="reserva : ${reservas}">
+                    <td th:text="${reserva.id}"></td>
+                    <td th:text="${reserva.usuario.nombre}"></td>
+                    <td th:text="${reserva.libro.titulo}"></td>
+                    <td th:text="${reserva.fechaReserva}"></td>
+                    <td th:text="${reserva.estado}"></td>
+                    <td>
+                        <a th:href="@{'/admin/reservas/' + ${reserva.id} + '/aprobar'}" class="btn btn-success">Aprobar</a>
+                        <a th:href="@{'/admin/reservas/' + ${reserva.id} + '/rechazar'}" class="btn btn-danger">Rechazar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

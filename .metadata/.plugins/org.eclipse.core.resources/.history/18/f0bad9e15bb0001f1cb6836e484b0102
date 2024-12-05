@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Libros</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.3/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Biblioteca</div>
+            </a>
+            <hr class="sidebar-divider my-0">
+            
+            <!-- Menú de navegación -->
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/libros">
+                    <i class="fas fa-book"></i>
+                    <span>Gestión de Libros</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/reservas">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Gestión de Reservas</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/reportedesanciones">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Reporte de Sanciones</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/prestamos">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Gestión de Préstamos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/sanciones">
+                    <i class="fas fa-ban"></i>
+                    <span>Gestión de Sanciones</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </a>
+            </li>
+            <hr class="sidebar-divider">
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <h1 class="h3 mb-0 text-gray-800">Lista de Libros</h1>
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Libros en la Biblioteca</h6>
+                        </div>
+                        <div class="card-body">
+                            <!-- Tabla de libros -->
+<div class="table-responsive">
+    <table class="table table-bordered" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>Género</th>
+                <th>ISBN</th>
+                <th>Fecha de Publicación</th>
+                <th>Stock</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="libro : ${libros}">
+                <td th:text="${libro.titulo}"></td>
+                <td th:text="${libro.autor}"></td>
+                <td th:text="${libro.genero}"></td>
+                <td th:text="${libro.isbn}"></td>
+                <td th:text="${libro.fechaPublicacion}"></td>
+                <td th:text="${libro.stock}"></td>
+                <td>
+                    <!-- Botón para abrir el modal de detalles -->
+                    <button type="button" class="btn btn-info btn-sm" 
+                            data-bs-toggle="modal" 
+                            th:data-bs-target="'#detallesModal' + ${libro.id}">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <a th:href="@{/admin/libros/{id}/editar(id=${libro.id})}" class="btn btn-warning btn-sm">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <form th:action="@{/admin/libros/{id}/eliminar(id=${libro.id})}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal para cada libro -->
+<!-- Modal para cada libro -->
+<div th:each="libro : ${libros}">
+    <div class="modal fade" th:id="'detallesModal' + ${libro.id}" tabindex="-1" aria-labelledby="detallesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:text="'Detalles del Libro: ' + ${libro.titulo}"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img th:src="${libro.imagen}" class="img-fluid img-thumbnail" alt="Portada del libro">
+                        </div>
+                        <div class="col-md-8">
+                            <h4 class="text-primary" th:text="${libro.titulo}"></h4>
+                            <p><strong>Autor:</strong> <span th:text="${libro.autor}"></span></p>
+                            <p><strong>Género:</strong> <span th:text="${libro.genero}"></span></p>
+                            <p><strong>ISBN:</strong> <span th:text="${libro.isbn}"></span></p>
+                            <p><strong>Fecha de Publicación:</strong> <span th:text="${libro.fechaPublicacion}"></span></p>
+                            <p><strong>Stock Disponible:</strong> <span th:text="${libro.stock}"></span></p>
+                        </div>
+                    </div>
+                    <hr>
+                    <h5>Sinopsis</h5>
+                    <p th:text="${libro.sinopsis}"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+                            <a href="/admin/libros/nuevo" class="btn btn-success mt-3"><i class="fas fa-plus"></i> Agregar Nuevo Libro</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+            </div>
+            <!-- End of Main Content -->
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.3/js/sb-admin-2.min.js"></script>
+</body>
+</html>

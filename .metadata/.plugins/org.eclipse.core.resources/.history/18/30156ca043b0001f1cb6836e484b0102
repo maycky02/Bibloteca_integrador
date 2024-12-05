@@ -1,0 +1,75 @@
+	package com.trilce.Bibloteca.servicios;
+	
+	import java.util.List;
+	import java.util.Optional;
+	
+	import org.springframework.stereotype.Service;
+	
+	import com.trilce.Bibloteca.Entidades.Libro;
+	import com.trilce.Bibloteca.repositorio.LibroRepository;
+	
+	import lombok.RequiredArgsConstructor;
+	
+	@Service
+	@RequiredArgsConstructor
+	public class LibroService {
+	
+	    private final LibroRepository libroRepository;
+	
+	    // Método para manejar la carga de imágenes
+	    public Libro agregarLibro(Libro libro, MultipartFile archivoImagen) throws IOException {
+	        if (!archivoImagen.isEmpty()) {
+	            // Generar un nombre único para la imagen
+	            String nombreImagen = UUID.randomUUID().toString() + "_" + archivoImagen.getOriginalFilename();
+	            Path rutaImagen = Paths.get("src/main/resources/static/imagenes", nombreImagen);
+	            
+	            // Guardar el archivo en el directorio
+	            Files.copy(archivoImagen.getInputStream(), rutaImagen, StandardCopyOption.REPLACE_EXISTING);
+	            
+	            // Asignar el nombre de la imagen al libro
+	            libro.setImagen(nombreImagen);
+	        }
+	        return libroRepository.save(libro);
+	    }
+	}
+	
+	    public Libro editarLibro(Long id, Libro libroActualizado) {
+	        Libro libro = libroRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Libro no encontrado"));
+	        libro.setTitulo(libroActualizado.getTitulo());
+	        libro.setAutor(libroActualizado.getAutor());
+	        libro.setFechaPublicacion(libroActualizado.getFechaPublicacion());
+	        libro.setGenero(libroActualizado.getGenero());
+	        libro.setSinopsis(libroActualizado.getSinopsis());
+	        libro.setIsbn(libroActualizado.getIsbn());
+	        libro.setStock(libroActualizado.getStock());
+	        return libroRepository.save(libro);
+	    }
+	    public void eliminarLibro(Long id) {
+	        if (!libroRepository.existsById(id)) {
+	            throw new IllegalArgumentException("Libro no encontrado");
+	        }
+	        libroRepository.deleteById(id);
+	    }
+	
+	    public List<Libro> listarLibros() {
+	        return libroRepository.findAll();
+	    }
+	    
+	    public Optional<Libro> buscarLibroPorId(Long id) {
+	        return libroRepository.findById(id); // Esto ya devuelve un Optional<Libro>
+	    }
+	    
+	    public void actualizarLibro(Libro libro) {
+	        libroRepository.save(libro); // Guarda el libro actualizado
+	    }
+	    // Método para obtener un libro por su ID
+	    public Libro obtenerLibro(Long id) {
+	        return libroRepository.findById(id)
+	                .orElseThrow(() -> new RuntimeException("Libro no encontrado con ID: " + id));
+	    }
+
+	    public List<Libro> obtenerTodosLosLibros() {
+	        return libroRepository.findAll(); // Consulta todos los libros
+	    }
+	}
+	

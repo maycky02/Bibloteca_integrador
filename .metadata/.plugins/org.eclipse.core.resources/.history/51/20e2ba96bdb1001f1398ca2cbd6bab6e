@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Usuario</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Fondo degradado de morado a blanco */
+        body {
+            background: linear-gradient(to bottom, #6a0dad, #ffffff);
+            height: 100vh;
+        }
+
+        /* Personalización de la tarjeta */
+        .card {
+            border-radius: 15px; /* Bordes curvos en la tarjeta */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .card-header {
+            background-color: #6a0dad;
+            color: white;
+            font-size: 1.8rem;
+            text-align: center;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            padding: 1rem;
+            margin-bottom: 20px;
+        }
+
+        /* Botones */
+        .btn-primary {
+            background-color: #6a0dad;
+            border-color: #6a0dad;
+            border-radius: 10px;
+        }
+
+        .btn-primary:hover {
+            background-color: #550a8a;
+            border-color: #550a8a;
+        }
+
+        /* Estilo para los campos de entrada */
+        .form-control {
+            border-radius: 10px; /* Bordes curvos en los campos de entrada */
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        /* Estilo para los mensajes de éxito y error */
+        .alert {
+            border-radius: 10px;
+        }
+
+        /* Ajustes de los enlaces */
+        a {
+            color: #6a0dad;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Eliminar color morado en el pie de página */
+        footer {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Contenedor principal -->
+    <div class="container d-flex align-items-center justify-content-center" style="height: 100vh;">
+        <div class="card" style="width: 100%; max-width: 500px;">
+            <div class="card-header">
+                Registrar Usuario
+            </div>
+
+            <!-- Mostrar mensaje de éxito o error -->
+            <div th:if="${mensaje}" class="alert alert-success" role="alert">
+                <p th:text="${mensaje}"></p>
+            </div>
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <p th:text="${error}"></p>
+            </div>
+
+            <!-- Formulario de registro -->
+            <form action="/registrarme" method="post">
+                <!-- Campo para el nombre -->
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Juan" required>
+                </div>
+
+                <!-- Campo para el apellido -->
+                <div class="mb-3">
+                    <label for="apellido" class="form-label">Apellido</label>
+                    <input type="text" class="form-control" id="apellido" name="apellido" placeholder="Pérez" required>
+                </div>
+
+                <!-- Campo para el correo -->
+                <div class="mb-3">
+                    <label for="correo" class="form-label">Correo Institucional</label>
+                    <input type="email" class="form-control" id="correo" name="correo" placeholder="ejemplo@trilce.edu" required>
+                </div>
+
+                <!-- Campo para el DNI (validado para 8 dígitos numéricos) -->
+                <div class="mb-3">
+                    <label for="dni" class="form-label">DNI</label>
+                    <input type="text" class="form-control" id="dni" name="dni" pattern="^\d{8}$" maxlength="8" placeholder="12345678" required>
+                    <small class="form-text text-muted">El DNI debe tener exactamente 8 dígitos numéricos.</small>
+                </div>
+
+                <!-- Campo para la contraseña -->
+                <div class="mb-3">
+                    <label for="contraseña" class="form-label">Contraseña</label>
+                    <input type="password" class="form-control" id="contraseña" name="contraseña" required>
+                </div>
+
+                <!-- Campo para confirmar la contraseña -->
+                <div class="mb-3">
+                    <label for="confirmarContraseña" class="form-label">Confirmar Contraseña</label>
+                    <input type="password" class="form-control" id="confirmarContraseña" name="confirmarContraseña" required>
+                </div>
+                
+                <!-- Botón de registro -->
+                <button type="submit" class="btn btn-primary w-100">Registrarme</button>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts de Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

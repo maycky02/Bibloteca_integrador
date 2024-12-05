@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Administrador</title>
+    <!-- CSS de SB Admin 2 -->
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+    <!-- Iconos -->
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+    <!-- Contenedor principal -->
+    <div id="wrapper">
+        <!-- Barra lateral -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <!-- Logotipo -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
+                <div class="sidebar-brand-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Biblioteca Trilce</div>
+            </a>
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+            <!-- Menú de navegación -->
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/libros">
+                    <i class="fas fa-book"></i>
+                    <span>Gestión de Libros</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/reservas">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Gestión de Reservas</span>
+                </a>
+            </li>
+          
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/prestamos">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Gestión de Préstamos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/sanciones">
+                    <i class="fas fa-ban"></i>
+                    <span>Gestión de Sanciones</span>
+                </a>
+            </li>
+             <li class="nav-item">
+                <a class="nav-link" href="/admin/reportedesanciones">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Reporte de Sanciones</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+        </ul>
+        <!-- Contenido principal -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <!-- Barra superior -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <h1 class="h3 mb-0 text-gray-800">Bienvenido, Administrador</h1>
+                </nav>
+                <!-- Contenido -->
+                <div class="container-fluid">
+                    <p>Selecciona una opción del menú para gestionar el sistema.</p>
+                </div>
+            </div>
+            <!-- Pie de página -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>&copy; 2024 Biblioteca Trilce. Todos los derechos reservados.</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <!-- Scripts de SB Admin 2 -->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="/js/sb-admin-2.min.js"></script>
+</body>
+</html>

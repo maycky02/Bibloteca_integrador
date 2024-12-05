@@ -1,0 +1,32 @@
+package com.trilce.Bibloteca.servicios;
+
+@Service
+public class LectorService {
+
+    private final LectorRepository lectorRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    public LectorService(LectorRepository lectorRepository, BCryptPasswordEncoder passwordEncoder) {
+        this.lectorRepository = lectorRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public Lector registrarLector(Lector lector) {
+        // Validar correo institucional
+        if (!lector.getCorreoInstitucional().endsWith("@trilce.edu")) {
+            throw new IllegalArgumentException("El correo debe terminar en @trilce.edu");
+        }
+
+        // Validar que el DNI sea único
+        if (lectorRepository.findAll().stream()
+                .anyMatch(existingLector -> existingLector.getDni().equals(lector.getDni()))) {
+            throw new IllegalArgumentException("El DNI ya está registrado");
+        }
+
+        // Cifrar la contraseña antes de guardarla
+        lector.setContrasena(passwordEncoder.encode(lector.getContrasena()));
+
+        // Guardar lector en la base de datos
+        return lectorRepository.save(lector);
+    }
+}

@@ -1,0 +1,28 @@
+package com.trilce.Bibloteca.controladores;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import com.trilce.Bibloteca.servicios.LectorService;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequiredArgsConstructor
+public class LectorController {
+    private final LectorService lectorService;
+
+    @GetMapping("/registro")
+    public String mostrarFormularioRegistro(Model model) {
+        model.addAttribute("lector", new Lector());
+        return "registro";  // Página del formulario de registro
+    }
+
+    @PostMapping("/registro")
+    public String registrarLector(Lector lector) {
+        lectorService.registrarLector(lector);
+        return "redirect:/login";  // Redirige a la página de login después de registrarse
+    }
+}

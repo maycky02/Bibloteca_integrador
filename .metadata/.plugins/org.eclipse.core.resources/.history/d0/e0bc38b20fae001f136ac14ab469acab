@@ -1,0 +1,25 @@
+package com.trilce.Bibloteca.Entidades;
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+import java.time.LocalDate;
+
+@Entity
+@Data
+public class Reserva {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.EAGER)  // Carga el usuario junto con la reserva
+    private Libro libro;
+
+    @ManyToOne(fetch = FetchType.EAGER)  // Carga el usuario junto con la reserva
+    private Usuario usuario;
+
+    private LocalDate fechaReserva;
+
+    private String estado; // Pendiente, Aprobada, Rechazada
+}

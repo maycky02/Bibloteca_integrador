@@ -1,0 +1,42 @@
+package com.trilce.Bibloteca.controladores;
+
+
+
+@Controller
+@RequestMapping("/admin/prestamos")
+@RequiredArgsConstructor
+public class PrestamoController {
+
+    private final PrestamoService prestamoService;
+    private final LibroService libroService;
+
+    // Mostrar lista de préstamos
+    @GetMapping
+    public String listarPrestamos(Model model) {
+        List<Prestamo> prestamos = prestamoService.listarPrestamos();
+        model.addAttribute("prestamos", prestamos);  // Pasamos los préstamos al modelo
+        return "admin/prestamos"; // Nombre de la vista
+    }
+
+    // Acción para devolver un préstamo
+    @PostMapping("/{id}/devolver")
+    public String devolverPrestamo(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            // Lógica para devolver el préstamo
+            boolean devueltoTarde = prestamoService.devolverPrestamo(id);
+
+            // Si fue devuelto tarde, añadir un mensaje de advertencia
+            if (devueltoTarde) {
+                redirectAttributes.addFlashAttribute("mensaje", "Devolución tardía. Se aplicará una sanción.");
+            } else {
+                // No es necesario actualizar el stock aquí, ya que el servicio lo maneja
+                redirectAttributes.addFlashAttribute("mensajeExito", "Libro devuelto con éxito.");
+            }
+
+            return "redirect:/admin/prestamos"; // Redirigir a la lista de préstamos
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("mensaje", "Error al devolver el préstamo: " + e.getMessage());
+            return "redirect:/admin/prestamos"; // Redirigir a la lista de préstamos con mensaje de error
+        }
+    }
+}

@@ -1,0 +1,56 @@
+package com.trilce.Bibloteca.controladores;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.trilce.Bibloteca.Entidades.Prestamo;
+import com.trilce.Bibloteca.servicios.PrestamoService;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequestMapping("/admin/prestamos")
+@RequiredArgsConstructor
+public class PrestamoController {
+
+    private final PrestamoService prestamoService;
+ 
+    // Mostrar lista de préstamos vencidos
+    @GetMapping
+    public String listarPrestamos(Model model) {
+        List<Prestamo> prestamos = prestamoService.listarPrestamos();
+        model.addAttribute("prestamos", prestamos);  // Pasamos los préstamos al modelo
+        return "admin/prestamos"; // Nombre de la vista
+    }
+
+    @PostMapping("/admin/prestamos/{id}/devolver")
+    public String devolverPrestamo(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            prestamoService.devolverPrestamo(id);
+
+            // Verificar si el préstamo fue devuelto tarde
+            Prestamo prestamo = prestamoService.buscarPrestamoPorId(id)
+                .orElseThrow(() -> new IllegalArgumentException("Préstamo no encontrado"));
+            if (prestamo.isDevueltoTarde()) {
+                redirectAttributes.addFlashAttribute("mensaje", "Préstamo devuelto tarde. Considere aplicar una sanción.");
+            } else {
+                redirectAttributes.addFlashAttribute("mensaje", "Préstamo devuelto exitosamente.");
+            }
+
+            return "redirect:/admin/prestamos";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al devolver el préstamo: " + e.getMessage());
+            return "redirect:/admin/prestamos";
+        }
+    }
+
+
+    }
+

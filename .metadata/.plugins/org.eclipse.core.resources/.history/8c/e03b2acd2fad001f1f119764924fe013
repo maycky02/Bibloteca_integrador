@@ -1,0 +1,5 @@
+package com.trilce.Bibloteca.servicios;
+
+public class UsuarioDetailsServiceImpl {
+
+}

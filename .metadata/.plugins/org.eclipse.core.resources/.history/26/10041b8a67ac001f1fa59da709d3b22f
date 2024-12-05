@@ -1,0 +1,97 @@
+package com.trilce.Bibloteca.controladores;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.trilce.Bibloteca.Entidades.Cliente;
+import com.trilce.Bibloteca.servicios.ClienteService;
+
+@Controller
+@RequestMapping("/admin/clientes")
+public class ClienteController {
+    @Autowired
+    private ClienteService clienteService;
+
+    // Listar lectores
+    @GetMapping
+    public String listarLectores(Model model) {
+        model.addAttribute("lectores", clienteService.listarLectores());
+        return "admin/lectores";
+    }
+
+    // Formulario para crear lector
+    @GetMapping("/crear")
+    public String mostrarFormularioCrear(Model model) {
+        model.addAttribute("lector", new Cliente());
+        return "admin/crear-lector";
+    }
+
+    // Crear lector
+    @PostMapping("/crear")
+    public String crearLector(@ModelAttribute Cliente lector, 
+                               RedirectAttributes redirectAttributes) {
+        try {
+            clienteService.crearLector(lector);
+            redirectAttributes.addFlashAttribute("mensaje", "Lector creado exitosamente");
+            return "redirect:/admin/clientes";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin/clientes/crear";
+        }
+    }
+
+    // Formulario para editar lector
+    @GetMapping("/editar/{id}")
+    public String mostrarFormularioEditar(@PathVariable Long id, Model model) {
+        Cliente lector = clienteService.obtenerClientePorId(id);
+        model.addAttribute("lector", lector);
+        return "admin/editar-lector";
+    }
+
+    // Editar lector
+    @PostMapping("/editar/{id}")
+    public String editarLector(@PathVariable Long id, 
+                                @ModelAttribute Cliente lector,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            clienteService.editarLector(id, lector);
+            redirectAttributes.addFlashAttribute("mensaje", "Lector actualizado exitosamente");
+            return "redirect:/admin/clientes";
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin/clientes/editar/" + id;
+        }
+    }
+
+    // Eliminar lector
+    @GetMapping("/eliminar/{id}")
+    public String eliminarLector(@PathVariable Long id, 
+                                 RedirectAttributes redirectAttributes) {
+        try {
+            clienteService.eliminarLector(id);
+            redirectAttributes.addFlashAttribute("mensaje", "Lector eliminado exitosamente");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/clientes";
+    }
+
+    // Buscar por DNI
+    @GetMapping("/buscar")
+    public String buscarPorDni(@RequestParam String dni, Model model) {
+        try {
+            Cliente lector = clienteService.buscarPorDni(dni);
+            model.addAttribute("lectores", Collections.singletonList(lector));
+        } catch (RuntimeException e) {
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("lectores", Collections.emptyList());
+        }
+        return "admin/lectores";
+    }
+}

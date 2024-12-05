@@ -1,0 +1,14 @@
+package com.trilce.Bibloteca.repositorio;
+
+package com.trilce.Bibloteca.repositorio;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.trilce.Bibloteca.Entidades.Prestamo;
+
+public interface PrestamoRepository extends JpaRepository<Prestamo, Long> {
+    List<Prestamo> findByUsuarioIdAndDevueltoFalse(Long usuarioId); // Cambié Lector a Usuario
+    List<Prestamo> findByDevueltoFalse(); // Para listar todos los préstamos no devueltos
+}

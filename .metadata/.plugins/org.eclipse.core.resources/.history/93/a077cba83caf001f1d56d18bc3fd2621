@@ -1,0 +1,40 @@
+package com.trilce.Bibloteca.servicios;
+
+import com.trilce.Bibloteca.Entidades.Sancion;
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.repositorio.SancionRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class SancionService {
+
+    private final SancionRepository sancionRepository;
+
+    public void crearSancion(Usuario usuario, String motivo, int dias) {
+        Sancion sancion = new Sancion();
+        sancion.setUsuario(usuario);
+        sancion.setMotivo(motivo);
+        sancion.setFechaInicio(LocalDate.now());
+        sancion.setFechaFin(LocalDate.now().plusDays(dias));
+
+        sancionRepository.save(sancion);
+    }
+
+    public List<Sancion> listarSanciones() {
+        return sancionRepository.findAll();
+    }
+
+    public List<Sancion> listarSancionesPorUsuario(Long usuarioId) {
+        return sancionRepository.findByUsuarioId(usuarioId);
+    }
+
+    public boolean usuarioTieneSancionActiva(Long usuarioId) {
+        return sancionRepository.findByUsuarioId(usuarioId).stream()
+                .anyMatch(Sancion::estaActiva);
+    }
+}

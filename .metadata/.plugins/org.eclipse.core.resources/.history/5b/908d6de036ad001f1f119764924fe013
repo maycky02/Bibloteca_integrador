@@ -1,0 +1,53 @@
+package com.trilce.Bibloteca.servicios;
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Cliente;
+import com.trilce.Bibloteca.Entidades.Sancion;
+import com.trilce.Bibloteca.repositorio.ClienteRepository;
+import com.trilce.Bibloteca.repositorio.SancionRepositorio;
+
+@Service
+public class SancionServicio {
+
+    @Autowired
+    private SancionRepositorio sancionRepository;
+
+    @Autowired
+    private ClienteRepository clienteRepository;
+
+    public List<Sancion> listarSancionesActivas() {
+        return sancionRepository.findAll().stream()
+                .filter(Sancion::isActiva)
+                .toList();
+    }
+
+    public void registrarSancion(Long clienteId) {
+        Cliente cliente = clienteRepository.findById(clienteId)
+                .orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado."));
+        Sancion sancion = new Sancion();
+        sancion.setCliente(cliente);
+        sancion.setFechaInicio(LocalDate.now());
+        sancion.setFechaFin(LocalDate.now().plusDays(14)); // Sanción de 14 días
+        sancion.setActiva(true);
+        sancionRepository.save(sancion);
+
+        cliente.setTieneSancion(true);
+        clienteRepository.save(cliente);
+    }
+
+    public void desbloquearSanciones() {
+        List<Sancion> sanciones = sancionRepository.findAll();
+        sanciones.forEach(sancion -> {
+            if (LocalDate.now().isAfter(sancion.getFechaFin())) {
+                sancion.setActiva(false);
+                sancion.getCliente().setTieneSancion(false);
+                sancionRepository.save(sancion);
+                clienteRepository.save(sancion.getCliente());
+            }
+        });
+    }
+}

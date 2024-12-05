@@ -1,0 +1,18 @@
+package com.trilce.Bibloteca.controladores;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class HomeController {
+
+    @GetMapping("/inicio")
+    public String redireccionSegunRol() {
+        // Se obtiene el rol del usuario autenticado
+        if (/* lógica para verificar rol */) {
+            return "redirect:/admin/dashboard";
+        } else {
+            return "redirect:/lector/catalogo";
+        }
+    }
+}

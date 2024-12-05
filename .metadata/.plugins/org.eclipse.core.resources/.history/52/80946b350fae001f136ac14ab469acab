@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmación de Reserva</title>
+</head>
+<body>
+    <h1>¡Reserva exitosa!</h1>
+    <p>Has reservado el libro: <strong th:text="${reserva.libro.titulo}"></strong></p>
+    <p>El libro debe ser recogido en un plazo de 24 horas. Si no lo recoges dentro de ese tiempo, la reserva será cancelada.</p>
+    <a href="/lector/catalogo">Volver al catálogo</a>
+</body>
+</html>

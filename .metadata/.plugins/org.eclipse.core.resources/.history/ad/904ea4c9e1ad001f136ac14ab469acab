@@ -1,0 +1,8 @@
+package com.trilce.Bibloteca.repositorio;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.trilce.Bibloteca.Entidades.Libro;
+
+public interface LibroRepository extends JpaRepository<Libro, Long> {
+}

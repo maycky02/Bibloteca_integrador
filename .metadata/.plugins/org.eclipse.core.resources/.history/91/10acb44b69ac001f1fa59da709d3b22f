@@ -1,0 +1,47 @@
+package com.trilce.Bibloteca.servicios;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Cliente;
+import com.trilce.Bibloteca.repositorio.ClienteRepository;
+
+@Service
+public class ClienteService {
+
+    @Autowired
+    private ClienteRepository clienteRepository;
+
+    // Métodos anteriores...
+
+    public List<Cliente> buscarClientes(String filtro) {
+        return clienteRepository.findByNombreContainingOrCorreoContainingOrDniContaining(filtro, filtro, filtro);
+    }
+
+    // Método para obtener cliente por DNI
+    public Cliente obtenerClientePorDni(String dni) {
+        return clienteRepository.findByDni(dni)
+            .orElseThrow(() -> new EntityNotFoundException("Cliente no encontrado con DNI: " + dni));
+    }
+
+    // Método para actualizar información del cliente
+    public Cliente actualizarCliente(Long id, Cliente clienteActualizado) {
+        Cliente clienteExistente = obtenerClientePorId(id);
+        
+        clienteExistente.setNombre(clienteActualizado.getNombre());
+        clienteExistente.setApellido(clienteActualizado.getApellido());
+        clienteExistente.setCorreo(clienteActualizado.getCorreo());
+        clienteExistente.setDni(clienteActualizado.getDni());
+        // Agrega más campos según necesites
+        
+        return clienteRepository.save(clienteExistente);
+    }
+
+    // Método para validar DNI (puedes agregar más validaciones)
+    public boolean validarDni(String dni) {
+        // Ejemplo de validación básica (ajusta según tus requisitos)
+        return dni != null && dni.length() == 8 && dni.matches("\\d+");
+    }
+}

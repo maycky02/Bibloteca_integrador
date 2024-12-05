@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Historial de Reservas</title>
+</head>
+<body>
+    <h1>Historial de Reservas</h1>
+    <div th:if="${mensaje}">
+        <p th:text="${mensaje}"></p>
+    </div>
+    <table th:if="${reservas}">
+        <thead>
+            <tr>
+                <th>ID Reserva</th>
+                <th>Libro</th>
+                <th>Fecha de Reserva</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="reserva : ${reservas}">
+                <td th:text="${reserva.id}"></td>
+                <td th:text="${reserva.libro.titulo}"></td>
+                <td th:text="${#dates.format(reserva.fechaReserva, 'yyyy-MM-dd')}"></td>
+                <td th:text="${reserva.estado}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

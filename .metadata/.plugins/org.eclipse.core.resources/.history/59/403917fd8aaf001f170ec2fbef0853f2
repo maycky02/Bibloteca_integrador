@@ -1,0 +1,62 @@
+package com.trilce.Bibloteca.controladores;
+
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.trilce.Bibloteca.Entidades.Libro;
+import com.trilce.Bibloteca.Entidades.Sancion;
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.repositorio.UsuarioRepository;
+import com.trilce.Bibloteca.servicios.LibroService;
+import com.trilce.Bibloteca.servicios.SancionService;
+
+import lombok.RequiredArgsConstructor;
+
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+@Controller
+@RequestMapping("/lector")
+@RequiredArgsConstructor
+public class LectorController {
+
+    private final LibroService libroService;
+    private final SancionService sancionService;
+    private final UsuarioRepository usuarioRepository;
+
+    private boolean verificarSancion(Usuario usuario, Model model) {
+        if (sancionService.tieneSancionActiva(usuario.getId())) {
+            Sancion sancion = sancionService.buscarSancionPorId(usuario.getId());
+            if (sancion != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                model.addAttribute("sancionMensaje", "No puedes realizar una reserva hasta el " +
+                        sancion.getFechaFin().format(formatter));
+            } else {
+                model.addAttribute("sancionMensaje", "Tienes una sanción activa.");
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @GetMapping("/catalogo")
+    public String listarCatalogo(Model model) {
+        List<Libro> libros = libroService.listarLibros();
+        model.addAttribute("libros", libros);
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Usuario usuario = usuarioRepository.findByCorreo(user.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        if (verificarSancion(usuario, model)) {
+            return "lector/catalogo";
+        }
+
+        return "lector/catalogo";
+    }
+}

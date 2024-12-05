@@ -1,0 +1,19 @@
+package com.trilce.Bibloteca.Entidades;
+
+
+@Entity
+@Data
+public class Usuario {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false)
+    private String nombreUsuario; // Cambiado de "username" a "nombreUsuario"
+
+    @Column(nullable = false)
+    private String contrasena; // Cambiado de "password" a "contrasena"
+
+    @Column(nullable = false)
+    private String rol; // Cambiado de "role" a "rol"
+}

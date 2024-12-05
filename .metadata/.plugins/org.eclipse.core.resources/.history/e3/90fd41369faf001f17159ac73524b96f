@@ -1,0 +1,67 @@
+package com.trilce.Bibloteca.controladores;
+
+import org.hibernate.validator.internal.util.logging.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.servicios.SancionService;
+import com.trilce.Bibloteca.servicios.UsuarioService;
+
+import ch.qos.logback.classic.Logger;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+@Controller
+@RequiredArgsConstructor
+public class SancionController {
+
+    private final UsuarioService usuarioService;
+    private final SancionService sancionService;
+
+    // Crear un logger para esta clase
+    private static final Logger logger = LoggerFactory.getLogger(SancionController.class);
+
+    // Mostrar la página de sanciones y buscar usuario por DNI
+    @GetMapping("/sanciones")
+    public String mostrarSancionesPage(@RequestParam(required = false) String dni, Model model) {
+        logger.info("Accediendo a la página de sanciones con DNI: {}", dni);  // Log para verificar acceso a la ruta
+        if (dni != null && !dni.isEmpty()) {
+            try {
+                // Buscar el usuario por DNI
+                Usuario usuario = usuarioService.buscarPorDni(dni);
+                model.addAttribute("usuario", usuario);
+                logger.info("Usuario encontrado: {}", usuario.getNombre());
+            } catch (IllegalArgumentException e) {
+                model.addAttribute("error", e.getMessage());
+                logger.error("Error al buscar el usuario con DNI {}: {}", dni, e.getMessage());
+            }
+        }
+        return "admin/sanciones";  // Asegúrate de que la vista esté en la carpeta 'admin'
+    }
+
+    // Registrar la sanción
+    @PostMapping("/sancionar-usuario")
+    public String sancionarUsuario(@RequestParam Long usuarioId,
+                                   @RequestParam String motivo,
+                                   @RequestParam int diasSancion,
+                                   Model model) {
+        logger.info("Registrando sanción para el usuario con ID: {}", usuarioId);
+        try {
+            // Registrar la sanción
+            sancionService.registrarSancion(usuarioId, motivo, diasSancion);
+
+            model.addAttribute("mensaje", "Sanción registrada correctamente.");
+            logger.info("Sanción registrada correctamente para el usuario con ID: {}", usuarioId);
+            return "admin/sanciones";  // Volver a la página de sanciones con el mensaje de éxito
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            logger.error("Error al registrar la sanción para el usuario con ID {}: {}", usuarioId, e.getMessage());
+            return "admin/sanciones";  // Volver a la página de sanciones en caso de error
+        }
+    }
+
+}

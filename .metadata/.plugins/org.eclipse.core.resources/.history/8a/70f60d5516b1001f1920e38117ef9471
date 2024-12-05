@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserva Confirmada</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Reserva Confirmada</h1>
+        
+        <div class="alert alert-success">
+            <!-- Mostrar el título del libro -->
+            <p><strong>Libro:</strong> <span th:text="${reserva.libro.titulo}"></span></p>
+            
+            <!-- Mostrar el DNI del usuario -->
+            <p><strong>Usuario:</strong> <span th:text="${reserva.usuario.dni}"></span></p>
+            
+            <!-- Mostrar la fecha formateada de la reserva -->
+            <p><strong>Fecha de Reserva:</strong> <span th:text="${fechaReservaFormateada}"></span></p>
+            
+            <!-- Mostrar el estado de la reserva -->
+            <p><strong>Estado:</strong> <span th:text="${reserva.estado}"></span></p>
+        </div>
+        
+        <a href="/lector/catalogo" class="btn btn-primary">Volver al Catálogo</a>
+    </div>
+</body>
+</html>

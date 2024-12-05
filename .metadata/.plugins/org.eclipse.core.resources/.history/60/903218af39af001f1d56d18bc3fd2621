@@ -1,0 +1,56 @@
+package com.trilce.Bibloteca.controladores;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.trilce.Bibloteca.Entidades.Libro;
+import com.trilce.Bibloteca.Entidades.Prestamo;
+import com.trilce.Bibloteca.repositorio.PrestamoRepository;
+import com.trilce.Bibloteca.servicios.LibroService;
+import com.trilce.Bibloteca.servicios.PrestamoService;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequestMapping("/admin/prestamos")
+@RequiredArgsConstructor
+public class PrestamoController {
+
+    private final PrestamoService prestamoService;
+    private final LibroService libroService;
+    private final PrestamoRepository prestamoRepository;
+    // Mostrar lista de préstamos vencidos
+    @GetMapping
+    public String listarPrestamos(Model model) {
+        List<Prestamo> prestamos = prestamoService.listarPrestamos();
+        model.addAttribute("prestamos", prestamos);  // Pasamos los préstamos al modelo
+        return "admin/prestamos"; // Nombre de la vista
+    }
+
+    // Acción para devolver un préstamo
+    public void devolverPrestamo(Long prestamoId) {
+        // Buscar el préstamo en la base de datos
+        Prestamo prestamo = prestamoRepository.findById(prestamoId)
+            .orElseThrow(() -> new IllegalArgumentException("Préstamo no encontrado"));
+
+        // Verificar si el préstamo está activo
+        if (!"Activo".equals(prestamo.getEstado())) {
+            throw new IllegalStateException("El préstamo ya ha sido devuelto o no está activo.");
+        }
+
+        // Cambiar el estado del préstamo a "Devuelto"
+        prestamo.setEstado("Devuelto");
+        prestamoRepository.save(prestamo);
+
+        // Incrementar el stock del libro asociado al préstamo
+        Libro libro = prestamo.getLibro();
+        libro.setStock(libro.getStock() + 1);
+        libroRepository.save(libro);
+    }
+
+    }
+}

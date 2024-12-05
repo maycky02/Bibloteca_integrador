@@ -1,0 +1,48 @@
+package com.trilce.Bibloteca.controladores;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.trilce.Bibloteca.Entidades.Prestamo;
+import com.trilce.Bibloteca.servicios.PrestamoService;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequestMapping("/admin/prestamos")
+@RequiredArgsConstructor
+public class PrestamoController {
+
+    private final PrestamoService prestamoService;
+ 
+    // Mostrar lista de préstamos vencidos
+    @GetMapping
+    public String listarPrestamos(Model model) {
+        List<Prestamo> prestamos = prestamoService.listarPrestamos();
+        model.addAttribute("prestamos", prestamos);  // Pasamos los préstamos al modelo
+        return "admin/prestamos"; // Nombre de la vista
+    }
+
+    // Acción para devolver un préstamo
+    @PostMapping("/{id}/devolver")
+    public String devolverPrestamo(@PathVariable Long id, Model model) {
+        // Llamar al servicio para realizar la devolución y obtener si fue tarde
+        boolean devueltoTarde = prestamoService.devolverPrestamo(id);
+        
+        // Si fue devuelto tarde, añadimos un mensaje de advertencia
+        if (devueltoTarde) {
+            model.addAttribute("mensaje", "Devolución tardía. Se aplicará una sanción.");
+        }
+
+        return "redirect:/admin/prestamos"; // Redirigir a la lista de préstamos
+    }
+
+
+    }
+

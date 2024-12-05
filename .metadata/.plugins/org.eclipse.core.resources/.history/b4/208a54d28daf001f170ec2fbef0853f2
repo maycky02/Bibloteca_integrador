@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Sanciones</title>
+    <!-- Incluyendo Bootstrap CSS desde CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container my-5">
+        <h1 class="text-center mb-4">Registro de Sanciones</h1>
+
+        <!-- Mostrar mensaje si existe -->
+        <div th:if="${mensaje != null}" class="alert alert-info text-center">
+            <p th:text="${mensaje}"></p>
+        </div>
+
+        <!-- Formulario para registrar la sanción -->
+        <form action="/admin/registrar_sancion" method="post" class="mb-4">
+            <div class="row mb-3">
+                <label for="dni" class="col-sm-2 col-form-label">DNI del Usuario:</label>
+                <div class="col-sm-10">
+                    <input type="text" id="dni" name="dni" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label for="motivo" class="col-sm-2 col-form-label">Motivo de la sanción:</label>
+                <div class="col-sm-10">
+                    <input type="text" id="motivo" name="motivo" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label for="diasDeSancion" class="col-sm-2 col-form-label">Días de sanción:</label>
+                <div class="col-sm-10">
+                    <input type="number" id="diasDeSancion" name="diasDeSancion" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary">Registrar Sanción</button>
+            </div>
+        </form>
+
+        <!-- Mostrar la lista de sanciones -->
+        <h2 class="text-center mb-4">Lista de Sanciones Registradas</h2>
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Usuario</th>
+                    <th>Motivo</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="sancion : ${sanciones}">
+                    <td th:text="${sancion.usuario.nombre}"></td>
+                    <td th:text="${sancion.motivo}"></td>
+                    <td th:text="${sancion.fechaInicio}"></td>
+                    <td th:text="${sancion.fechaFin}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Incluyendo Bootstrap JS y Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

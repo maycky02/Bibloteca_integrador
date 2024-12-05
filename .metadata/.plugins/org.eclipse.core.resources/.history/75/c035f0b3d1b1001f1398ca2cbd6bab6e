@@ -1,0 +1,88 @@
+package com.trilce.Bibloteca.servicios;
+
+import java.time.LocalDate;
+import java.util.List;
+import org.springframework.stereotype.Service;
+import com.trilce.Bibloteca.Entidades.Sancion;
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.repositorio.SancionRepository;
+import com.trilce.Bibloteca.repositorio.UsuarioRepository;
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class SancionService {
+
+    private final SancionRepository sancionRepository;
+    private final UsuarioRepository usuarioRepository;
+
+    /**
+     * Registra una nueva sanción para un usuario.
+     * 
+     * @param usuarioId   ID del usuario al que se le aplicará la sanción.
+     * @param motivo      Razón por la que se aplica la sanción.
+     * @param diasSancion Número de días que durará la sanción.
+     */
+    public void registrarNuevaSancion(Long usuarioId, String motivo, int diasSancion) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + usuarioId));
+
+        Sancion sancion = new Sancion();
+        sancion.setUsuario(usuario);
+        sancion.setMotivo(motivo);
+        sancion.setFechaInicio(LocalDate.now());
+        sancion.setFechaFin(LocalDate.now().plusDays(diasSancion));
+
+        sancionRepository.save(sancion);
+    }
+
+    /**
+     * Lista todas las sanciones registradas.
+     * 
+     * @return Lista de todas las sanciones.
+     */
+    public List<Sancion> listarSanciones() {
+        return sancionRepository.findAll();
+    }
+
+    /**
+     * Elimina una sanción específica por su ID.
+     * 
+     * @param id ID de la sanción a eliminar.
+     */
+    public void eliminarSancion(Long id) {
+        sancionRepository.deleteById(id);
+    }
+
+    /**
+     * Verifica si un usuario tiene una sanción activa en el sistema.
+     * 
+     * @param usuarioId ID del usuario a verificar.
+     * @return true si el usuario tiene una sanción activa, false en caso contrario.
+     */
+    public boolean tieneSancionActiva(Long usuarioId) {
+        return sancionRepository.existsByUsuarioIdAndFechaFinAfter(usuarioId, LocalDate.now());
+    }
+
+    /**
+     * Busca una sanción específica por su ID.
+     * 
+     * @param sancionId ID de la sanción a buscar.
+     * @return La sanción encontrada.
+     * @throws IllegalArgumentException si no se encuentra una sanción con el ID proporcionado.
+     */
+    public Sancion buscarSancionPorId(Long sancionId) {
+        return sancionRepository.findById(sancionId)
+                .orElseThrow(() -> new IllegalArgumentException("Sanción no encontrada con ID: " + sancionId));
+    }
+
+    /**
+     * Lista todas las sanciones activas (cuya fecha de fin es posterior a la fecha
+     * actual).
+     * 
+     * @return Lista de sanciones activas.
+     */
+    public List<Sancion> listarSancionesActivas() {
+        return sancionRepository.findByFechaFinAfter(LocalDate.now());
+    }
+}

@@ -1,0 +1,22 @@
+package com.trilce.Bibloteca.scheduler;
+
+@Service
+public class SancionCleanupService {
+
+    private final SancionRepository sancionRepository;
+
+    public SancionCleanupService(SancionRepository sancionRepository) {
+        this.sancionRepository = sancionRepository;
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?") // Ejecuta todos los días a medianoche
+    public void limpiarSancionesVencidas() {
+        List<Sancion> sanciones = sancionRepository.findAll();
+
+        for (Sancion sancion : sanciones) {
+            if (LocalDate.now().isAfter(sancion.getFechaFin())) {
+                sancionRepository.delete(sancion); // Eliminar sanción vencida
+            }
+        }
+    }
+}

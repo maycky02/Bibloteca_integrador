@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Reservas y Préstamos</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Asegúrate de tener el archivo de estilos -->
+</head>
+<body>
+    <header>
+        <h1>Historial de Reservas y Préstamos</h1>
+        <nav>
+            <a href="/lector/catalogo">Ver Catálogo</a>
+            <a href="/lector/historial">Ver Historial</a>
+        </nav>
+    </header>
+
+    <section>
+        <h2>Reservas Realizadas</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Libro</th>
+                    <th>Fecha de Reserva</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Mostrar las reservas del usuario -->
+                <tr th:each="reserva : ${reservas}">
+                    <td th:text="${reserva.libro.titulo}"></td>
+                    <td th:text="${reserva.fechaReserva}"></td>
+                    <td th:text="${reserva.estado}"></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>Préstamos Realizados</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Libro</th>
+                    <th>Fecha de Préstamo</th>
+                    <th>Fecha de Devolución</th>
+                    <th>Estado de Devolución</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Mostrar los préstamos del usuario -->
+                <tr th:each="prestamo : ${prestamos}">
+                    <td th:text="${prestamo.libro.titulo}"></td>
+                    <td th:text="${prestamo.fechaPrestamo}"></td>
+                    <td th:text="${prestamo.fechaDevolucion}"></td>
+                    <td th:text="${prestamo.estadoDevolucion}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Biblioteca</p>
+    </footer>
+</body>
+</html>

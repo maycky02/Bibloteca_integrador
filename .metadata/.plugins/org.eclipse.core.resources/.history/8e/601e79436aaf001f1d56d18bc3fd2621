@@ -1,0 +1,17 @@
+package com.trilce.Bibloteca.repositorio;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.trilce.Bibloteca.Entidades.Sancion;
+
+@Repository
+public interface SancionRepository extends JpaRepository<Sancion, Long> {
+    List<Sancion> findByDniUsuario(String dniUsuario);
+
+    List<Sancion> findByFechaFinAfter(LocalDate fechaActual);
+    Sancion findTopByDniUsuarioAndFechaFinAfterOrderByFechaFinDesc(String dniUsuario, LocalDate fechaFin);
+}

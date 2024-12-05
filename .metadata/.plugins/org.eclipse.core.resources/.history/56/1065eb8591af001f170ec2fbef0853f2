@@ -1,0 +1,60 @@
+package com.trilce.Bibloteca.servicios;
+
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.repositorio.UsuarioRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class UsuarioService {
+
+    private final UsuarioRepository usuarioRepository;
+
+    public boolean correoEsValido(String correo) {
+        return correo.endsWith("@trilce.edu");
+    }
+
+    public boolean dniEsUnico(String dni) {
+        return usuarioRepository.findByDni(dni).isEmpty();
+    }
+
+    public Usuario registrarUsuario(Usuario usuario) {
+        if (!correoEsValido(usuario.getCorreo())) {
+            throw new IllegalArgumentException("El correo no es institucional.");
+        }
+        if (!dniEsUnico(usuario.getDni())) {
+            throw new IllegalArgumentException("El DNI ya está registrado.");
+        }
+        return usuarioRepository.save(usuario);
+    }
+    
+    public Usuario buscarPorId(Long id) {
+        return usuarioRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+    }
+    
+    
+
+
+    / // Método para buscar un usuario por DNI
+    public Usuario buscarPorDni(String dni) {
+        // Asegúrate de que el repositorio tiene un método para encontrar un usuario por DNI
+        Optional<Usuario> usuario = usuarioRepository.findByDni(dni);
+        if (usuario.isPresent()) {
+            return usuario.get();
+        } else {
+            throw new IllegalArgumentException("Usuario no encontrado con DNI: " + dni);
+        }
+    }
+
+    // Método para obtener un usuario por ID
+    public Usuario obtenerUsuarioPorId(Long id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con id: " + id));
+    }
+}

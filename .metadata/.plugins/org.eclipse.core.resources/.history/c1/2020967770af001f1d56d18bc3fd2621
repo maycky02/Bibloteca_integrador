@@ -1,0 +1,118 @@
+package com.trilce.Bibloteca.controladores;
+
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.trilce.Bibloteca.Entidades.Libro;
+import com.trilce.Bibloteca.Entidades.Reserva;
+import com.trilce.Bibloteca.Entidades.Sancion;
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.repositorio.UsuarioRepository;
+import com.trilce.Bibloteca.servicios.LibroService;
+import com.trilce.Bibloteca.servicios.ReservaService;
+import com.trilce.Bibloteca.servicios.SancionService;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequestMapping("/lector")
+@RequiredArgsConstructor
+public class LectorController {
+
+    private final LibroService libroService;  
+    private final ReservaService reservaService;  
+    private final UsuarioRepository usuarioRepository; // Inyectar el repositorio
+    private final SancionService sancionService;  // Inyectar servicio de sanción
+
+    // Método para verificar si el usuario está sancionado
+    private boolean verificarSancion(Usuario usuario, Model model) {
+        // Verificar si el usuario tiene una sanción activa usando el DNI del usuario
+        if (sancionService.tieneSancionActiva(usuario.getDni())) {
+            // Convertir el DNI de String a Long si es necesario (si es un número largo)
+            Long dniLong = Long.valueOf(usuario.getDni()); // Suponiendo que el DNI es un String numérico
+
+            // Buscar la sanción por ID (que es el DNI en este caso)
+            Sancion sancion = sancionService.buscarSancionPorId(dniLong); // Obtener la sanción usando el DNI como ID
+
+            if (sancion != null) {  // Verificar si la sanción es válida (no es null)
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                String mensaje = "No puedes realizar una reserva hasta el " + sancion.getFechaFin().format(formatter);
+                model.addAttribute("sancionMensaje", mensaje);  // Pasar el mensaje al modelo
+                return true;  // El usuario está sancionado
+            } else {
+                // Si no se encuentra la sanción, podemos mostrar un mensaje de error
+                model.addAttribute("sancionMensaje", "No se encuentra la sanción en el sistema.");
+            }
+        }
+        return false;  // El usuario no está sancionado
+    }
+
+    // Método para listar el catálogo de libros
+    @GetMapping("/catalogo")
+    public String listarCatalogo(Model model) {
+        List<Libro> libros = libroService.listarLibros();  
+        model.addAttribute("libros", libros);  
+
+        // Obtener el correo del usuario logueado
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String correoUsuario = user.getUsername();  // Obtener el correo del usuario logueado
+
+        // Buscar al usuario por correo
+        Usuario usuario = usuarioRepository.findByCorreo(correoUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        // Verificar si el usuario está sancionado
+        if (verificarSancion(usuario, model)) {
+            // Si está sancionado, retornar a la vista con el mensaje de sanción
+            return "lector/catalogo";  
+        }
+
+        return "lector/catalogo";  // Retornar la vista 'catalogo.html'
+    }
+
+    // Método para reservar un libro
+    @GetMapping("/reservar/{id}")
+    public String reservarLibro(@PathVariable Long id, Model model) {
+        // Obtener el libro por su ID
+        Libro libro = libroService.buscarLibroPorId(id)
+                .orElseThrow(() -> new IllegalArgumentException("Libro no encontrado"));
+
+        // Obtener el correo del usuario logueado
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String correoUsuario = user.getUsername();  // Obtener el correo del usuario logueado
+
+        // Buscar al usuario por correo
+        Usuario usuario = usuarioRepository.findByCorreo(correoUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        // Verificar si el usuario está sancionado
+        if (verificarSancion(usuario, model)) {
+            // Si está sancionado, no permitir realizar la reserva
+            return "lector/catalogo";  // Redirigir a catálogo con el mensaje de sanción
+        }
+
+        // Si no está sancionado, proceder con la reserva
+        Reserva nuevaReserva = new Reserva();
+        nuevaReserva.setLibro(libro);
+        nuevaReserva.setUsuario(usuario);
+
+        // Guardar la reserva utilizando el servicio
+        reservaService.reservarLibro(nuevaReserva);
+
+        // Agregar la reserva al modelo
+        model.addAttribute("reserva", nuevaReserva);  // Pasamos la reserva a la vista
+        model.addAttribute("success", "Reserva realizada correctamente");
+
+        // Redirige a la página de confirmación
+        return "lector/reserva_confirmada";  // Redirige a la página de confirmación
+    }
+    
+}

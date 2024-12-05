@@ -1,0 +1,20 @@
+package com.trilce.Bibloteca.scheduler;
+
+
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import com.trilce.Bibloteca.servicios.ReservaService;
+
+import lombok.RequiredArgsConstructor;
+
+@Component
+@RequiredArgsConstructor
+public class ReservaScheduler {
+    private final ReservaService reservaService;
+
+    @Scheduled(cron = "0 0 * * * *") // Ejecuta cada hora
+    public void cancelarReservasVencidas() {
+        reservaService.cancelarReservasVencidas();
+    }
+}

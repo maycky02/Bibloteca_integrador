@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserva Confirmada</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <!-- Contenedor principal -->
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+
+                <!-- Título -->
+                <h1 class="text-center text-primary mb-4">Reserva Confirmada</h1>
+
+                <!-- Alerta de éxito -->
+                <div class="alert alert-success">
+                    <!-- Mostrar el título del libro -->
+                    <p><strong>Libro:</strong> <span th:text="${reserva.libro.titulo}">Título del libro</span></p>
+                    
+                    <!-- Mostrar el DNI del usuario -->
+                    <p><strong>Usuario:</strong> <span th:text="${reserva.usuario.dni}">DNI del usuario</span></p>
+                    
+                    <!-- Mostrar la fecha formateada de la reserva -->
+                    <p><strong>Fecha de Reserva:</strong> <span th:text="${fechaReservaFormateada}">Fecha</span></p>
+                    
+                    <!-- Mostrar el estado de la reserva -->
+                    <p><strong>Estado:</strong> <span th:text="${reserva.estado}">Estado de la reserva</span></p>
+                </div>
+
+                <!-- Alerta informando el tiempo para recoger el libro -->
+                <div class="alert alert-warning">
+                    <strong>Importante:</strong> Tienes 24 horas para recoger el libro, de lo contrario, la reserva será rechazada 	.
+                </div>
+                
+                <!-- Botón para volver al catálogo -->
+                <div class="text-center">
+                    <a href="/lector/catalogo" class="btn btn-primary">Volver al Catálogo</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

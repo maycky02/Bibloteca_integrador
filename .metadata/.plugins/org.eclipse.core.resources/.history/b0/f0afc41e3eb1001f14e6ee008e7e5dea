@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Historial de Reservas</title>
+</head>
+<body>
+    <h1>Historial de Reservas</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Libro</th>
+                <th>Fecha de Reserva</th>
+                <th>Estado</th>
+                <th>Fecha de Devolución</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="reserva : ${reservas}">
+                <td th:text="${reserva.libro.titulo}">Título del libro</td>
+                <td th:text="${reserva.fechaReserva}">Fecha de reserva</td>
+                <td th:text="${reserva.estado}">Estado</td>
+                <td th:text="${#strings.defaultString(reserva.fechaDevolucion, 'Pendiente')}">Fecha de devolución</td>
+            </tr>
+        </tbody>
+    </table>
+    <a href="/lector/catalogo">Volver al Catálogo</a>
+</body>
+</html>

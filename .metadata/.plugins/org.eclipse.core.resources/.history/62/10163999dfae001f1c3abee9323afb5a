@@ -1,0 +1,60 @@
+package com.trilce.Bibloteca.servicios;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Libro;
+import com.trilce.Bibloteca.Entidades.Prestamo;
+import com.trilce.Bibloteca.repositorio.LibroRepository;
+import com.trilce.Bibloteca.repositorio.PrestamoRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class PrestamoService {
+
+    private final PrestamoRepository prestamoRepository ;
+    private final LibroRepository libroRepository;  // Inyectar el repository de libros
+    private final SancionService sancionService;    // Inyectar el servicio de sanciones
+
+    public void registrarDevolucion(Long id) {
+        Prestamo prestamo = prestamoRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Préstamo no encontrado"));
+
+        if (!"Activo".equals(prestamo.getEstado())) {
+            throw new IllegalStateException("El préstamo ya fue devuelto.");
+        }
+
+        // Actualizar estado del préstamo
+        prestamo.setEstado("Devuelto");
+        prestamoRepository.save(prestamo);
+
+        // Incrementar el stock del libro
+        Libro libro = prestamo.getLibro();
+        libro.setStock(libro.getStock() + 1);
+        libroRepository.save(libro);  // Guardar el libro actualizado
+    }
+
+    public List<Prestamo> listarTodos() {
+        return prestamoRepository.findAll();
+    }
+
+ // En tu servicio donde llamas al repositorio
+    LocalDate fechaLimite = LocalDate.now();  // La fecha actual
+    String estado = "Devuelto";  // El estado que deseas excluir
+
+    // Llamada al método corregido en el repositorio
+    List<Prestamo> prestamosVencidos = PrestamoRepository.findByFechaDevolucionBeforeAndEstadoNot(fechaLimite, estado);
+
+    public void registrarPrestamo(Prestamo prestamo) {
+        String dniUsuario = prestamo.getUsuario().getDni();
+        if (sancionService.tieneSancionActiva(dniUsuario)) {
+            throw new IllegalStateException("No puede realizar préstamos. Usted está sancionado.");
+        }
+        // Resto del flujo, como guardar el préstamo en la base de datos
+        prestamoRepository.save(prestamo);
+    }
+}

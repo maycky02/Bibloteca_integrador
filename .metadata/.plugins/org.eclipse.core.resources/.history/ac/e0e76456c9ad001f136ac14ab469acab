@@ -1,0 +1,27 @@
+package com.trilce.Bibloteca.Entidades;
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+@Entity
+@Data
+public class Libro {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String titulo;
+
+    private String autor;
+
+    private String genero;
+
+    private String isbn;
+
+    private String sinopsis;
+
+    private String imagen; // Ruta o URL de la imagen
+
+    private int stock;
+}

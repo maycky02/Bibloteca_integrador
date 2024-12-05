@@ -1,0 +1,14 @@
+package com.trilce.Bibloteca.repositorio;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.trilce.Bibloteca.Entidades.Reserva;
+
+public interface ReservaRepository extends JpaRepository<Reserva, Long> {
+    List<Reserva> findByUsuarioId(Long usuarioId); // Actualizado a Usuario
+
+    List<Reserva> findByRecogidoFalseAndVencimientoReservaBefore(LocalDateTime now);
+}

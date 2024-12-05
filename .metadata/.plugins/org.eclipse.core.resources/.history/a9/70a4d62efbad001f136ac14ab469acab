@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Libros</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Libros en la Biblioteca</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>Género</th>
+                    <th>ISBN</th>
+                    <th>Fecha de Publicación</th>
+                    <th>Stock</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Iterar sobre los libros -->
+                <tr th:each="libro : ${libros}">
+                    <td th:text="${libro.titulo}"></td>
+                    <td th:text="${libro.autor}"></td>
+                    <td th:text="${libro.genero}"></td>
+                    <td th:text="${libro.isbn}"></td>
+                    <td th:text="${libro.fechaPublicacion}"></td>
+                    <td th:text="${libro.stock}"></td>
+                    <td>
+                        <!-- Ver detalles del libro -->
+                        <a th:href="@{/admin/libros/{id}(id=${libro.id})}" class="btn btn-info">Ver</a>
+                        
+                        <!-- Editar libro -->
+                        <a th:href="@{/admin/libros/{id}/editar(id=${libro.id})}" class="btn btn-warning">Editar</a>
+
+                        <!-- Eliminar libro con un formulario -->
+                        <form th:action="@{/admin/libros/{id}(id=${libro.id})}" method="post" style="display:inline;">
+                            <!-- Campo oculto para simular DELETE -->
+                            <input type="hidden" name="_method" value="DELETE"/>
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Botón para agregar un nuevo libro -->
+        <a href="/admin/libros/nuevo" class="btn btn-success">Agregar Nuevo Libro</a>
+    </div>
+</body>
+</html>

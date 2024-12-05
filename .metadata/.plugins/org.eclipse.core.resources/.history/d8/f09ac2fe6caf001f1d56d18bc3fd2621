@@ -1,0 +1,57 @@
+package com.trilce.Bibloteca.controladores;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.trilce.Bibloteca.Entidades.Sancion;
+import com.trilce.Bibloteca.servicios.SancionService;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequestMapping("/admin/sanciones")
+@RequiredArgsConstructor
+public class SancionController {
+
+    private final SancionService sancionService;
+
+    // Cambié la ruta de /listar a la raíz de /admin/sanciones
+    @GetMapping
+    public String listarSanciones(Model model) {
+        List<Sancion> sanciones = sancionService.listarSanciones();
+        model.addAttribute("sanciones", sanciones);
+        return "admin/sanciones";  // Vista con la tabla de sanciones
+    }
+
+    // Método para eliminar la sanción
+    @PostMapping("/{id}/eliminar")
+    public String eliminarSancion(@PathVariable Long id) {
+        sancionService.eliminarSancion(id);
+        return "redirect:/admin/sanciones"; // Redirige de vuelta a la lista de sanciones
+    }
+
+    // Método para registrar una sanción
+    @PostMapping("/registrar")
+    public String registrarSancion(@RequestParam String dniUsuario,
+                                    @RequestParam String motivo,
+                                    @RequestParam int diasDeSancion) {
+        sancionService.registrarSancion(dniUsuario, motivo, diasDeSancion);
+        return "redirect:/admin/sanciones"; // Redirige de vuelta a la vista de sanciones
+    }
+
+    // Confirmar eliminación de sanción
+    @GetMapping("/confirmarEliminar/{id}")
+    public String confirmarEliminarSancion(@PathVariable Long id, Model model) {
+        Sancion sancion = sancionService.buscarSancionPorId(id); // Busca la sanción por ID
+        model.addAttribute("sancion", sancion);
+        return "admin/confirmarEliminar"; // Vista para confirmar la eliminación
+    }
+
+}

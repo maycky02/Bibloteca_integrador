@@ -1,0 +1,48 @@
+package com.trilce.Bibloteca.controladores;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.trilce.Bibloteca.Entidades.Reserva;
+import com.trilce.Bibloteca.servicios.ReservaService;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequestMapping("/admin/reservas")
+@RequiredArgsConstructor
+public class ReservaController {
+
+    private final ReservaService reservaService;
+
+    @GetMapping
+    public String listarReservas(Model model) {
+        List<Reserva> reservas = reservaService.listarReservas();
+        model.addAttribute("reservas", reservas);
+        return "admin/reservas"; // Nombre de la vista
+    }
+
+    @PostMapping("/{id}/aprobar")
+    public String aprobarReserva(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        reservaService.aprobarReserva(id);
+        reservaService.crearPrestamoDesdeReserva(id);
+
+        redirectAttributes.addFlashAttribute("success", "Reserva aprobada y préstamo creado.");
+        return "redirect:/admin/prestamos"; // Redirigir a la lista de préstamos
+    }
+
+    @PostMapping("/{id}/rechazar")
+    public String rechazarReserva(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        reservaService.rechazarReserva(id);
+        
+        redirectAttributes.addFlashAttribute("success", "Reserva rechazada y stock actualizado.");
+        return "redirect:/admin/reservas"; // Redirigir a la vista de reservas
+    }
+}

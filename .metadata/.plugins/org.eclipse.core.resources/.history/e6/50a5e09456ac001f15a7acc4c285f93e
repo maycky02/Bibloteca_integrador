@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Gestión de Biblioteca</title>
+    <link rel="stylesheet" href="/css/sb-admin-2.min.css">
+    <link rel="stylesheet" href="/css/sb-admin-2.css">
+</head>
+<body id="page-top">
+    <!-- Contenedor principal -->
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <div th:replace="fragments/sidebar :: sidebar"></div>
+        <!-- Contenido de la página -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <!-- Encabezado -->
+                <div th:replace="fragments/header :: header"></div>
+                <!-- Contenido principal -->
+                <div class="container-fluid">
+                    <div th:replace="${content}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Scripts -->
+    <script src="/js/sb-admin-2.min.js"></script>
+</body>
+</html>

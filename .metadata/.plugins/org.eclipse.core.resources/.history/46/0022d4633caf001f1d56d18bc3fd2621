@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Sanciones</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Gestión de Sanciones</h1>
+
+        <!-- Tabla de sanciones -->
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Usuario</th>
+                    <th>Motivo</th>
+                    <th>Inicio</th>
+                    <th>Fin</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="sancion : ${sanciones}">
+                    <td th:text="${sancion.usuario.dni}"></td>
+                    <td th:text="${sancion.motivo}"></td>
+                    <td th:text="${sancion.fechaInicio}"></td>
+                    <td th:text="${sancion.fechaFin}"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Formulario para registrar nueva sanción -->
+        <form method="post" action="/admin/sanciones/nueva">
+            <div class="form-group">
+                <label for="dni">DNI Usuario</label>
+                <input type="text" id="dni" name="dni" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="motivo">Motivo</label>
+                <input type="text" id="motivo" name="motivo" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="dias">Días de sanción</label>
+                <input type="number" id="dias" name="dias" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Registrar Sanción</button>
+        </form>
+    </div>
+</body>
+</html>

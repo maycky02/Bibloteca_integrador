@@ -1,0 +1,57 @@
+package com.trilce.Bibloteca.servicios;
+
+import com.trilce.Bibloteca.Entidades.Sancion;
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.repositorio.SancionRepository;
+import com.trilce.Bibloteca.repositorio.UsuarioRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class SancionService {
+
+    private final SancionRepository sancionRepository;
+    private final UsuarioRepository usuarioRepository;
+
+    // Registrar una sanción
+    public void registrarSancion(Long usuarioId, String motivo, int diasDeSancion) {
+        // Obtener el usuario por su ID
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        // Crear la sanción y asociarla con el usuario
+        Sancion sancion = new Sancion();
+        sancion.setUsuario(usuario);  // Establecer el usuario relacionado
+        sancion.setMotivo(motivo);
+        sancion.setFechaInicio(LocalDate.now());
+        sancion.setFechaFin(LocalDate.now().plusDays(diasDeSancion));
+        sancionRepository.save(sancion);
+    }
+
+    // Listar todas las sanciones
+    public List<Sancion> listarSanciones() {
+        return sancionRepository.findAll();
+    }
+
+    // Eliminar una sanción por ID
+    public void eliminarSancion(Long id) {
+        sancionRepository.deleteById(id);
+    }
+
+    // Verificar si un usuario tiene sanción activa por ID
+    public boolean tieneSancionActiva(Long usuarioId) {
+        List<Sancion> sanciones = sancionRepository.findByUsuarioId(usuarioId);  // Buscar por ID de usuario
+        return sanciones.stream().anyMatch(s -> s.getFechaFin().isAfter(LocalDate.now()));  // Verifica si alguna sanción no ha expirado
+    }
+
+ // Buscar una sanción por ID de usuario
+    public Sancion buscarSancionPorId(Long usuarioId) {
+        List<Sancion> sanciones = sancionRepository.findByUsuarioId(usuarioId);  // Buscar todas las sanciones de ese usuario
+        return sanciones.isEmpty() ? null : sanciones.get(0);  // Si hay sanciones, devolver la primera, si no, null
+    }
+
+}

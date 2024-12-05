@@ -1,0 +1,60 @@
+package com.trilce.Bibloteca.controladores;
+
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.servicios.SancionService;
+import com.trilce.Bibloteca.servicios.UsuarioService;
+
+@Controller
+public class AdminController {
+	private final UsuarioService usuarioService;
+
+    @GetMapping("/admin/dashboard")
+    public String mostrarDashboard(Model model) {
+        // Agregar datos al modelo si es necesario
+        return "admin/dashboard"; // Nombre de la vista Thymeleaf
+    }
+    
+    
+ 
+    
+    @GetMapping("/sanciones")
+    public String mostrarSancionesPage(@RequestParam(required = false) String dni, Model model) {
+        if (dni != null && !dni.isEmpty()) {
+            try {
+                Usuario usuario = usuarioService.buscarPorDni(dni);
+                model.addAttribute("usuario", usuario);
+            } catch (IllegalArgumentException e) {
+                model.addAttribute("error", e.getMessage());
+            }
+        }
+        return "admin/sanciones";
+    }
+
+    @PostMapping("/sancionar-usuario")
+    public String sancionarUsuario(@RequestParam Long usuarioId,
+                                   @RequestParam String motivo,
+                                   @RequestParam int diasSancion,
+                                   Model model) {
+        try {
+            sancionService.registrarSancion(usuarioId, motivo, diasSancion);
+            model.addAttribute("mensaje", "Sanción registrada correctamente.");
+            return "admin/sanciones";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            return "admin/sanciones";
+        }
+    }
+    
+    
+    
+    
+    
+    
+}

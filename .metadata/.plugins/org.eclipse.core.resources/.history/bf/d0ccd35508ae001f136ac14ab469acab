@@ -1,0 +1,58 @@
+package com.trilce.Bibloteca.servicios;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Reserva;
+import com.trilce.Bibloteca.repositorio.PrestamoRepository;
+import com.trilce.Bibloteca.repositorio.ReservaRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class ReservaService {
+
+    private final ReservaRepository reservaRepository;
+    private final PrestamoRepository prestamoRepository;
+    private final LibroService libroService;
+
+    public void aprobarReserva(Long id) {
+        Reserva reserva = reservaRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada"));
+        reserva.setEstado("Aprobada");
+        reservaRepository.save(reserva);
+    }
+
+    public void rechazarReserva(Long id) {
+        Reserva reserva = reservaRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada"));
+        reserva.setEstado("Rechazada");
+        reservaRepository.save(reserva);
+    }
+    
+    public void cancelarReservasVencidas() {
+        // Obtener todas las reservas
+        List<Reserva> todasLasReservas = reservaRepository.findAll();
+
+        // Filtrar las reservas vencidas (puedes usar una fecha de vencimiento o una condición similar)
+        List<Reserva> reservasVencidas = todasLasReservas.stream()
+            .filter(reserva -> reserva.getFechaReserva().isBefore(LocalDate.now()) && "Pendiente".equals(reserva.getEstado()))
+            .collect(Collectors.toList());
+
+        // Cambiar el estado de las reservas vencidas a "Cancelada" o eliminarlas
+        for (Reserva reserva : reservasVencidas) {
+            reserva.setEstado("Cancelada"); // O también puedes eliminarla
+            reservaRepository.save(reserva); // Guardar el cambio
+        }
+    }
+    public List<Reserva> listarReservas() {
+        return reservaRepository.findAll(); // Método para listar todas las reservas
+    }
+    
+    
+    
+}

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Sanciones</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.3/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Biblioteca</div>
+            </a>
+            <hr class="sidebar-divider my-0">
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/libros">
+                    <i class="fas fa-book"></i>
+                    <span>Gestión de Libros</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/reservas">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Gestión de Reservas</span>
+                </a>
+            </li>
+           
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/prestamos">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Gestión de Préstamos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/sanciones">
+                    <i class="fas fa-ban"></i>
+                    <span>Gestión de Sanciones</span>
+                </a>
+            </li>
+             <li class="nav-item">
+                <a class="nav-link" href="/admin/reportedesanciones">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Reporte de Sanciones</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </a>
+            </li>
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <h1 class="h3 mb-0 text-gray-800">Gestión de Sanciones</h1>
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    <h1>Gestión de Sanciones</h1>
+
+                    <!-- Formulario de búsqueda -->
+                    <form action="/admin/sanciones" method="get" class="mb-4">
+                        <div class="mb-3">
+                            <label for="dni" class="form-label">DNI del Usuario</label>
+                            <input type="text" class="form-control" id="dni" name="dni" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Buscar</button>
+                    </form>
+
+                    <!-- Detalles del usuario y formulario de sanción -->
+                    <div th:if="${usuario != null}">
+                        <h2>Detalles del Usuario</h2>
+                        <p><strong>Nombre:</strong> <span th:text="${usuario.nombre}"></span></p>
+                        <p><strong>DNI:</strong> <span th:text="${usuario.dni}"></span></p>
+                        <p><strong>Correo:</strong> <span th:text="${usuario.correo}"></span></p>
+
+                        <h3>Registrar Sanción</h3>
+                        <form action="/admin/sancionar-usuario" method="post">
+                            <input type="hidden" name="usuarioId" th:value="${usuario.id}">
+                            <div class="mb-3">
+                                <label for="motivo" class="form-label">Motivo de la sanción</label>
+                                <input type="text" class="form-control" id="motivo" name="motivo" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="diasSancion" class="form-label">Días de sanción</label>
+                                <input type="number" class="form-control" id="diasSancion" name="diasSancion" required>
+                            </div>
+                            <button type="submit" class="btn btn-danger">Registrar Sanción</button>
+                        </form>
+                    </div>
+
+                    <!-- Mensaje de error -->
+                    <div th:if="${error != null}" class="alert alert-danger mt-3">
+                        <strong>Error:</strong> <span th:text="${error}"></span>
+                    </div>
+
+                    <!-- Mensaje de éxito -->
+                    <div th:if="${mensaje != null}" class="alert alert-success mt-3">
+                        <strong>Éxito:</strong> <span th:text="${mensaje}"></span>
+                    </div>
+                </div>
+                <!-- End of Page Content -->
+            </div>
+            <!-- End of Content Wrapper -->
+        </div>
+        <!-- End of Page Wrapper -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zyj7WzX5qqQkFfN0fALw7pFLCzU9lK7pt/X60qj6" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-MQ8puoLFVzgn6h+9FfF6Z86d2WkZT5mjO1ZZ96dFg3k9LrIqlkGqMjzmszTt59mH" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.3/js/sb-admin-2.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+package com.trilce.Bibloteca.repositorio;
+
+
+package com.trilce.biblioteca.repository;
+
+import com.trilce.biblioteca.model.Prestamo;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface PrestamoRepository extends JpaRepository<Prestamo, Long> {
+    List<Prestamo> findByLectorIdAndDevueltoFalse(Long lectorId);
+    List<Prestamo> findByDevueltoFalse();
+}

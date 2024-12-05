@@ -1,0 +1,68 @@
+package com.trilce.Bibloteca.servicios;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Sancion;
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.repositorio.SancionRepository;
+import com.trilce.Bibloteca.repositorio.UsuarioRepository;
+
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class SancionService {
+
+    private final SancionRepository sancionRepository;
+    private final UsuarioRepository usuarioRepository;
+
+    public void registrarSancion(Long usuarioId, String motivo, int diasSancion) {
+        // Buscar al usuario con el ID
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + usuarioId));
+
+        // Crear una nueva sanción
+        Sancion sancion = new Sancion();
+        sancion.setUsuario(usuario);
+        sancion.setMotivo(motivo);
+        sancion.setFechaFin(LocalDate.now().plusDays(diasSancion));
+
+        // Guardar la sanción en la base de datos
+        sancionRepository.save(sancion);
+    }
+
+
+    public List<Sancion> listarSanciones() {
+        return sancionRepository.findAll();
+    }
+
+    public void eliminarSancion(Long id) {
+        sancionRepository.deleteById(id);
+    }
+
+    public boolean tieneSancionActiva(Long usuarioId) {
+        return sancionRepository.findByUsuarioIdAndFechaFinAfter(usuarioId, LocalDate.now()).size() > 0;
+    }
+
+    public Sancion buscarSancionPorId(Long sancionId) {
+        return sancionRepository.findById(sancionId)
+                .orElse(null);
+    }
+    
+    public List<Sancion> listarSancionesActivas() {
+        return sancionRepository.findAll().stream()
+                .filter(sancion -> LocalDate.now().isBefore(sancion.getFechaFin()))
+                .collect(Collectors.toList());
+    }
+
+    // Método para registrar una sanción
+    public void registrarSancion(Sancion sancion) {
+        sancionRepository.save(sancion);
+    }
+    
+}

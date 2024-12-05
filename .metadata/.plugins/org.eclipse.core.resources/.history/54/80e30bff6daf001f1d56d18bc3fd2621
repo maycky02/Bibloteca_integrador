@@ -1,0 +1,61 @@
+package com.trilce.Bibloteca.servicios;
+
+import com.trilce.Bibloteca.Entidades.Sancion;
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.repositorio.SancionRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class SancionService {
+
+    private final SancionRepository sancionRepository;
+
+    // Registrar una sanción
+    public void registrarSancion(String dniUsuario, String motivo, int diasDeSancion) {
+        Sancion sancion = new Sancion();
+        sancion.setDniUsuario(dniUsuario);
+        sancion.setMotivo(motivo);
+        sancion.setFechaInicio(LocalDate.now());
+        sancion.setFechaFin(LocalDate.now().plusDays(diasDeSancion));
+        sancionRepository.save(sancion);
+    }
+
+    // Listar todas las sanciones
+    public List<Sancion> listarSanciones() {
+        return sancionRepository.findAll();
+    }
+
+    // Eliminar una sanción por ID
+    public void eliminarSancion(Long id) {
+        sancionRepository.deleteById(id);
+    }
+
+    // Verificar si un usuario tiene sanción activa
+    public boolean tieneSancionActiva(String dniUsuario) {
+        List<Sancion> sanciones = sancionRepository.findByDniUsuario(dniUsuario);
+        return sanciones.stream().anyMatch(s -> s.getFechaFin().isAfter(LocalDate.now()));  // Verifica si alguna sanción no ha expirado
+    }
+
+    // Método para aplicar sanción a un usuario (pendiente de implementación)
+    public void aplicarSancion(Usuario usuario) {
+        // TODO: Implementar lógica para aplicar sanción al usuario
+    }
+
+    // Buscar una sanción por ID
+    public Sancion buscarSancionPorId(Long id) {
+        return sancionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Sanción no encontrada"));
+    }
+
+	public Sancion buscarSancionPorId(String dni) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+    
+    
+}

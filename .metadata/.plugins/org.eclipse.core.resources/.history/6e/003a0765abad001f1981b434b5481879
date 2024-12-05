@@ -1,0 +1,17 @@
+package com.trilce.Bibloteca.repositorio;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.trilce.Bibloteca.Entidades.Prestamo;
+
+@Repository
+public interface PrestamoRepository extends JpaRepository<Prestamo, Long> {
+    // Buscar préstamos por usuario
+    List<Prestamo> findByUsuarioId(Long usuarioId);
+
+    // Buscar préstamos por estado (pendiente, retrasado, entregado)
+    List<Prestamo> findByEstado(String estado);
+}

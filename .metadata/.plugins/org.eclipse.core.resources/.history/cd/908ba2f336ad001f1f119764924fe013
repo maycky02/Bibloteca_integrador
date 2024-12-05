@@ -1,0 +1,25 @@
+package com.trilce.Bibloteca.servicios;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.repositorio.UsuarioRepositorio;
+
+@Service
+public class UsuarioService {
+
+    private final UsuarioRepositorio usuarioRepositorio;
+    private final PasswordEncoder passwordEncoder;
+
+    public UsuarioService(UsuarioRepositorio usuarioRepositorio, PasswordEncoder passwordEncoder) {
+        this.usuarioRepositorio = usuarioRepositorio;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public Usuario registrarUsuario(Usuario usuario) {
+        // Encriptar la contraseña antes de guardar
+        usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+        return usuarioRepositorio.save(usuario);
+    }
+}

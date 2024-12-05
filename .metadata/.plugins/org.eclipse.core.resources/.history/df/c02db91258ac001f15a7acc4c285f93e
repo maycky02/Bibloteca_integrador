@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Sanciones</title>
+    <!-- Estilos de AdminLTE -->
+    <link rel="stylesheet" href="/css/adminlte.min.css">
+    <link rel="stylesheet" href="/vendor/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+</head>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <!-- Título del sidebar -->
+            <a href="#" class="brand-link">
+                <i class="fas fa-book-reader brand-image img-circle elevation-3"></i>
+                <span class="brand-text font-weight-light">Biblioteca</span>
+            </a>
+            <!-- Menú -->
+            <div class="sidebar">
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+                        <li class="nav-item">
+                            <a href="/admin/libros" class="nav-link">
+                                <i class="nav-icon fas fa-book"></i>
+                                <p>Gestión de Libros</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/clientes" class="nav-link">
+                                <i class="nav-icon fas fa-user"></i>
+                                <p>Gestión de Clientes</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/prestamos" class="nav-link">
+                                <i class="nav-icon fas fa-handshake"></i>
+                                <p>Gestión de Préstamos</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/sanciones" class="nav-link active">
+                                <i class="nav-icon fas fa-exclamation-triangle"></i>
+                                <p>Gestión de Sanciones</p>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+        <!-- Fin Sidebar -->
+
+        <!-- Contenido Principal -->
+        <div class="content-wrapper">
+            <!-- Encabezado -->
+            <section class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1>Gestión de Sanciones</h1>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contenido -->
+            <section class="content">
+                <div class="container-fluid">
+                    <!-- Formulario para Registrar Nueva Sanción -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Registrar Nueva Sanción</h3>
+                        </div>
+                        <div class="card-body">
+                            <form action="/admin/sanciones" method="post" class="mb-4">
+                                <div class="form-group">
+                                    <label for="clienteId">Seleccionar Cliente:</label>
+                                    <select name="clienteId" id="clienteId" required class="form-control">
+                                        <option th:each="cliente : ${clientes}" th:value="${cliente.id}" th:text="${cliente.nombre}"></option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-danger">Registrar Sanción</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Botón para Desbloquear Sanciones Vencidas -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Desbloquear Sanciones Vencidas</h3>
+                        </div>
+                        <div class="card-body">
+                            <form action="/admin/sanciones/desbloquear" method="get" class="mb-4">
+                                <button type="submit" class="btn btn-warning">Desbloquear</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de Sanciones Activas -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Sanciones Activas</h3>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th>Fecha de Inicio</th>
+                                        <th>Fecha de Fin</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="sancion : ${sanciones}">
+                                        <td th:text="${sancion.cliente.nombre}"></td>
+                                        <td th:text="${sancion.fechaInicio}"></td>
+                                        <td th:text="${sancion.fechaFin}"></td>
+                                        <td th:text="${sancion.activa ? 'Activa' : 'Inactiva'}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <!-- Fin Contenido Principal -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/adminlte.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+package com.trilce.Bibloteca.controladores;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import com.trilce.Bibloteca.Entidades.Usuario;
+import com.trilce.Bibloteca.servicios.UsuarioService;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequiredArgsConstructor
+public class UsuarioController {
+    private final UsuarioService usuarioService;
+
+    @GetMapping("/registro")
+    public String mostrarFormularioRegistro(Model model) {
+        model.addAttribute("usuario", new Usuario());
+        return "registro";  // Página del formulario de registro
+    }
+
+    @PostMapping("/registro")
+    public String registrarUsuario(Usuario usuario) {
+        usuarioService.registrarUsuario(usuario);
+        return "redirect:/login";  // Redirige a la página de login después de registrarse
+    }
+}

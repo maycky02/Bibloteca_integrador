@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Panel del Administrador</title>
+</head>
+<body>
+    <h1>Bienvenido al Panel de Administración</h1>
+    <nav>
+        <ul>
+            <li><a href="/admin/libros">Gestión de Libros</a></li>
+            <li><a href="/admin/reservas">Gestión de Reservas</a></li>
+            <li><a href="/admin/usuarios">Gestión de Usuarios</a></li>
+        </ul>
+    </nav>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+</body>
+</html>
